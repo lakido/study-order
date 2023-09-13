@@ -28,7 +28,7 @@ public class ConnectionDatabaseSingleton {
         return singletonConnection;
     }
 
-    public Connection getConnection() {
+    public synchronized Connection getConnection() {
         return connection;
     }
 }
