@@ -1,4 +1,4 @@
-package org.study.data.inserting;
+package org.study.data.operations.inserting;
 
 import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.entity.IngredientEntity;
@@ -6,6 +6,7 @@ import org.study.data.entity.RecipeEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,11 @@ public class InsertRecipe {
     ConnectionDatabaseSingleton connectionDatabaseSingleton = ConnectionDatabaseSingleton.getInstance();
     Connection connection = connectionDatabaseSingleton.getConnection();
 
+    //TODO separate this method into two. one of them should insert recipe, return some value
+    //TODO create another method to insert ingredients and create relation table
+    //TODO these methods should be separated and can be called from another class sequentially
+    //TODO this needs to be done because of acquisition the ability to control this operations
+    //TODO each method should throws some exceptions, that should be handled, so the application could continue work
     public void insertRecipe(RecipeEntity recipeEntity, List<IngredientEntity> list) {
         List<IngredientEntity> listWithUniqueIngredients = new ArrayList<>(list);
 
@@ -25,7 +31,7 @@ public class InsertRecipe {
             preparedStatement.setString(1, recipeEntity.getName());
             preparedStatement.setString(2, recipeEntity.getCategory());
             preparedStatement.setInt(3, recipeEntity.getPopularity());
-            preparedStatement.setInt(4, recipeEntity.getAge_preferences());
+            preparedStatement.setInt(4, recipeEntity.getAgePreferences());
 
             //inserting new record into recipe table
             preparedStatement.executeUpdate();
@@ -96,7 +102,9 @@ public class InsertRecipe {
                  ) {
                 preparedStatement.setString(1, entity.getName());
 
-                list.add(new IngredientEntity(preparedStatement.executeQuery()));
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                list.add(IngredientEntity.getIngredientEntity(resultSet));
             }
 
         } catch (SQLException e) {

@@ -1,21 +1,21 @@
-package org.study.data.extraction;
+package org.study.data.operations.extraction;
 
 import org.study.data.connection.ConnectionDatabaseSingleton;
-import org.study.data.entity.RecipeEntity;
+import org.study.data.entity.IngredientEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ExtractRecipeEntity {
+public class ExtractIngredientEntity {
     private final ConnectionDatabaseSingleton connectionDatabaseSingleton = ConnectionDatabaseSingleton.getInstance();
     private final Connection connection = connectionDatabaseSingleton.getConnection();
 
-    public RecipeEntity extractRecipeFromDataBase(int id) {
+    public IngredientEntity extractIngredientFromDataBase(int id) {
         if (id == 0) id = 1;
 
-        String sql = "SELECT * FROM Recipe WHERE id = ?";
+        String sql = "SELECT * FROM Ingredients WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)
         ) {
@@ -23,7 +23,7 @@ public class ExtractRecipeEntity {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            return new RecipeEntity(resultSet);
+            return IngredientEntity.getIngredientEntity(resultSet);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -32,11 +32,11 @@ public class ExtractRecipeEntity {
         throw new IllegalArgumentException("Incorrect input values!");
     }
 
-    public RecipeEntity extractRecipeFromDataBase(String name) {
+    public IngredientEntity extractIngredientFromDataBase(String name) {
 
         if (name == null || name.equals("")) throw new IllegalArgumentException("Empty String is invalid!");
 
-        String sql = "SELECT * FROM Recipe WHERE name = ?";
+        String sql = "SELECT * FROM Ingredients WHERE name = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)
         ) {
@@ -44,7 +44,7 @@ public class ExtractRecipeEntity {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            return new RecipeEntity(resultSet);
+            return IngredientEntity.getIngredientEntity(resultSet);
 
         } catch (SQLException e) {
             e.printStackTrace();
