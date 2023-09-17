@@ -1,23 +1,20 @@
-package org.study.data.deletion;
+package org.study.data.operations.deletion;
 
 import org.study.data.connection.ConnectionDatabaseSingleton;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DeleteIngredient {
-
-    private final ConnectionDatabaseSingleton connectionDatabaseSingleton= ConnectionDatabaseSingleton.getInstance();
-    private final Connection connection = connectionDatabaseSingleton.getConnection();
+    private final Connection connection = ConnectionDatabaseSingleton.getInstance().getConnection();
 
     public void deleteIngredient(int id) {
         if (id == 0) id = 1;
 
-        String sql = "DELETE FROM Ingredients WHERE id = ?";
+        String query = "DELETE FROM Ingredients WHERE id = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)
         ){
             preparedStatement.setInt(1, id);
 
@@ -44,8 +41,8 @@ public class DeleteIngredient {
             preparedStatement.setString(1, name);
             preparedStatementForDeletionOfRelation.setString(1, name);
 
-            int deletedRecord = preparedStatementForDeletionOfRelation.executeQuery().getInt("id");
-            deleteRelationIngredientRecipe(deletedRecord);
+            int recordForDeletion = preparedStatementForDeletionOfRelation.executeQuery().getInt("id");
+            deleteRelationIngredientRecipe(recordForDeletion);
 
             preparedStatement.executeUpdate();
 
