@@ -1,5 +1,8 @@
 package org.study.data.entity;
 
+import org.study.data.exceptions.FailedReadException;
+import org.study.data.exceptions.UnexpectedException;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -10,6 +13,8 @@ public class RecipeEntity {
     private final String category;
     private final int popularity;
     private final int agePreferences;
+
+    //TODO rework the system of exception everywhere
 
     public RecipeEntity(String name, String category, int popularity, int agePreferences) {
         this.name = name;
@@ -26,17 +31,20 @@ public class RecipeEntity {
         this.agePreferences = agePreferences;
     }
 
-    public static RecipeEntity getRecipeEntity(ResultSet resultSet) {
+    public static RecipeEntity getRecipeEntity(ResultSet resultSet) throws UnexpectedException, FailedReadException {
         try {
             return new RecipeEntity(resultSet.getInt("id"),
                     resultSet.getString("name"),
                     resultSet.getString("category"),
                     resultSet.getInt("popularity"),
-                    resultSet.getInt("agePreferences"));
+                    resultSet.getInt("age_preferences"));
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            throw new FailedReadException();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new UnexpectedException();
         }
-        throw new RuntimeException("Wrong sql result!");
     }
 
     @Override

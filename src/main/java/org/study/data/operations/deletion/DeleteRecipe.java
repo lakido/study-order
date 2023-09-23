@@ -1,39 +1,41 @@
 package org.study.data.operations.deletion;
 
 import org.study.data.connection.ConnectionDatabaseSingleton;
+import org.study.data.connection.ConnectionWrapper;
+import org.study.data.exceptions.*;
+import org.study.data.operations.SinglePreparedStatementWrapper;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DeleteRecipe {
 
-    private final Connection connection = ConnectionDatabaseSingleton.getInstance().getConnection();
+    private final ConnectionWrapper connection = ConnectionDatabaseSingleton.getInstance().getConnection();
 
     public int deleteRecipe(int id) {
         String queryForRecipeDeletion = "DELETE FROM Recipe WHERE id = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeDeletion)){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeDeletion);
 
-            preparedStatement.setInt(1, id);
+            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
+            singlePreparedStatementWrapper.setInt(1, id);
 
-            if (deleteRelationRecord(id) == 0) {
-                preparedStatement.executeUpdate();
-                return 0;
+            if (deleteRelationRecord(id) != 0) {
+                return singlePreparedStatementWrapper.executeUpdate();
             }
 
-            return -1;
+            throw new FailedDeleteException();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (FailedDeleteException | FailedStatementException | FailedConnectingException | UnexpectedException |
+                 FailedExecuteException e) {
+            throw new RuntimeException(e);
         }
-
-        return -2;
     }
 
     public int deleteRecipe(String name) {
-        String queryForDeletion = "DELETE FROM Recipe WHERE name = ?";
+        String queryForDeletion = "DELETE OR IGNORE FROM Recipe WHERE name = ?";
         String queryForSelectionIdOfDeletingRecords = "SELECT id FROM Recipe WHERE name = ?";
 
         try (PreparedStatement preparedStatement1 = connection.prepareStatement(queryForDeletion);
@@ -57,20 +59,19 @@ public class DeleteRecipe {
     }
 
     private int deleteRelationRecord(int id) {
-        String queryForRecipeIngredientRelation = "DELETE FROM Ingredients_Recipe WHERE id_recipe = ?";
+        String queryForRecipeIngredientRelation = "DELETE OR IGNORE FROM Ingredients_Recipe WHERE id_recipe = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeIngredientRelation)) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeIngredientRelation);
 
-            preparedStatement.setInt(1, id);
+            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
-            preparedStatement.executeUpdate();
+            singlePreparedStatementWrapper.setInt(1, id);
 
-            return 0;
+            return singlePreparedStatementWrapper.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException e) {
+            throw new RuntimeException(e);
         }
-
-        return  -1;
     }
 }

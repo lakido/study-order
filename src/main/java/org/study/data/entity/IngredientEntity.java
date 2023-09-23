@@ -1,5 +1,8 @@
 package org.study.data.entity;
 
+import org.study.data.exceptions.FailedReadException;
+import org.study.data.exceptions.UnexpectedException;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -26,19 +29,18 @@ public class IngredientEntity {
         this.recommendation = recommendation;
     }
 
-    public static IngredientEntity getIngredientEntity(ResultSet resultSet) {
+    public static IngredientEntity getIngredientEntity(ResultSet resultSet) throws FailedReadException, UnexpectedException {
         try {
             return new IngredientEntity(resultSet.getInt("id"),
                     resultSet.getString("name"),
                     resultSet.getInt("calories"),
                     resultSet.getInt("weight"),
                     resultSet.getString("recommendation"));
-
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new FailedReadException();
+        } catch (Exception e) {
+            throw new UnexpectedException();
         }
-        throw new RuntimeException("Wrong arguments");
     }
 
     @Override

@@ -1,69 +1,88 @@
 package org.study.data.operations.deletion;
 
 import org.study.data.connection.ConnectionDatabaseSingleton;
+import org.study.data.connection.ConnectionWrapper;
+import org.study.data.exceptions.FailedConnectingException;
+import org.study.data.exceptions.FailedExecuteException;
+import org.study.data.exceptions.FailedStatementException;
+import org.study.data.exceptions.UnexpectedException;
+import org.study.data.operations.SinglePreparedStatementWrapper;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DeleteIngredient {
-    private final Connection connection = ConnectionDatabaseSingleton.getInstance().getConnection();
+    private final ConnectionWrapper connection = ConnectionDatabaseSingleton.getInstance().getConnection();
 
     public void deleteIngredient(int id) {
         if (id == 0) id = 1;
 
         String query = "DELETE FROM Ingredients WHERE id = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)
-        ){
-            preparedStatement.setInt(1, id);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+
+            singlePreparedStatementWrapper.setInt(1, id);
 
             deleteRelationIngredientRecipe(id);
 
             preparedStatement.executeUpdate();
 
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteIngredient(String name) {
+    public int deleteIngredient(String name) {
         if (name == null || name.equals("")) throw new IllegalArgumentException("Empty string is invalid!");
 
-        String sql = "DELETE FROM Ingredients WHERE name = ?";
-        String sql2 = "SELECT id FROM Ingredients WHERE name = ?";
+        String queryForDeletionOfIngredientsWithName = "DELETE FROM Ingredients WHERE name = ?";
+        String queryForSelectionIdFromIngredientsWithName = "SELECT id FROM Ingredients WHERE name = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             PreparedStatement preparedStatementForDeletionOfRelation = connection.prepareStatement(sql2)
-        ){
-            preparedStatement.setString(1, name);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(queryForDeletionOfIngredientsWithName);
+            PreparedStatement preparedStatementForDeletionOfRelation = connection.prepareStatement(queryForSelectionIdFromIngredientsWithName);
+
+            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+//            SinglePreparedStatementWrapper preparedStatementForDeletionOfRelationWrapper = new SinglePreparedStatementWrapper(preparedStatementForDeletionOfRelation);
+
+            singlePreparedStatementWrapper.setString(1, name);
             preparedStatementForDeletionOfRelation.setString(1, name);
 
-            int recordForDeletion = preparedStatementForDeletionOfRelation.executeQuery().getInt("id");
-            deleteRelationIngredientRecipe(recordForDeletion);
+            int deletedRecordId = preparedStatementForDeletionOfRelation.executeQuery().getInt("id");
 
-            preparedStatement.executeUpdate();
+            if ( deleteRelationIngredientRecipe(deletedRecordId) != 0) {
+                singlePreparedStatementWrapper.executeUpdate();
+                return 0;
+            }
 
+            throw new UnexpectedException();
+
+        } catch (UnexpectedException | FailedExecuteException | FailedStatementException e) {
+            throw new RuntimeException(e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    private void deleteRelationIngredientRecipe(int id) {
+    private int deleteRelationIngredientRecipe(int id) {
         if (id == 0) id = 1;
 
         String sql = "DELETE FROM Ingredients_Recipe WHERE id_ingredients = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)
-        ){
-            preparedStatement.setInt(1, id);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.executeUpdate();
+            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+            singlePreparedStatementWrapper.setInt(1, id);
+
+            return singlePreparedStatementWrapper.executeUpdate();
+
+        } catch (FailedStatementException | FailedConnectingException | UnexpectedException | FailedExecuteException e) {
+            throw new RuntimeException(e);
         }
     }
 
