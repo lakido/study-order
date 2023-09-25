@@ -28,8 +28,15 @@ public class DeleteRecipe {
 
             throw new FailedDeleteException();
 
-        } catch (FailedDeleteException | FailedStatementException | FailedConnectingException | UnexpectedException |
-                 FailedExecuteException e) {
+        } catch (UnexpectedException e) {
+            throw new RuntimeException(e);
+        } catch (FailedExecuteException e) {
+            throw new RuntimeException(e);
+        } catch (FailedDeleteException e) {
+            throw new RuntimeException(e);
+        } catch (FailedStatementException e) {
+            throw new RuntimeException(e);
+        } catch (FailedConnectingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -51,8 +58,8 @@ public class DeleteRecipe {
                 return 0;
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
         }
 
         return -1;
@@ -70,7 +77,13 @@ public class DeleteRecipe {
 
             return singlePreparedStatementWrapper.executeUpdate();
 
-        } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException e) {
+        } catch (UnexpectedException e) {
+            throw new RuntimeException(e);
+        } catch (FailedExecuteException e) {
+            throw new RuntimeException(e);
+        } catch (FailedStatementException e) {
+            throw new RuntimeException(e);
+        } catch (FailedConnectingException e) {
             throw new RuntimeException(e);
         }
     }

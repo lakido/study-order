@@ -46,7 +46,6 @@ public class DeleteIngredient {
             PreparedStatement preparedStatementForDeletionOfRelation = connection.prepareStatement(queryForSelectionIdFromIngredientsWithName);
 
             SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-//            SinglePreparedStatementWrapper preparedStatementForDeletionOfRelationWrapper = new SinglePreparedStatementWrapper(preparedStatementForDeletionOfRelation);
 
             singlePreparedStatementWrapper.setString(1, name);
             preparedStatementForDeletionOfRelation.setString(1, name);
@@ -60,8 +59,12 @@ public class DeleteIngredient {
 
             throw new UnexpectedException();
 
-        } catch (UnexpectedException | FailedExecuteException | FailedStatementException e) {
-            throw new RuntimeException(e);
+        } catch (UnexpectedException exception) {
+            throw new RuntimeException(exception);
+        } catch (FailedExecuteException exception) {
+            throw new RuntimeException(exception);
+        } catch (FailedStatementException exception) {
+            throw new RuntimeException(exception);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -80,10 +83,14 @@ public class DeleteIngredient {
             singlePreparedStatementWrapper.setInt(1, id);
 
             return singlePreparedStatementWrapper.executeUpdate();
-
-        } catch (FailedStatementException | FailedConnectingException | UnexpectedException | FailedExecuteException e) {
+        } catch (UnexpectedException e) {
+            throw new RuntimeException(e);
+        } catch (FailedExecuteException e) {
+            throw new RuntimeException(e);
+        } catch (FailedStatementException e) {
+            throw new RuntimeException(e);
+        } catch (FailedConnectingException e) {
             throw new RuntimeException(e);
         }
     }
-
 }

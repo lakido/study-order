@@ -32,8 +32,14 @@ public class InsertIngredientWorker {
 
             return singlePreparedStatementWrapper.executeUpdate();
 
-        } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException exception) {
-            throw exception;
+        } catch (FailedConnectingException e) {
+            throw new RuntimeException(e);
+        } catch (FailedStatementException e) {
+            throw new RuntimeException(e);
+        } catch (FailedExecuteException e) {
+            throw new RuntimeException(e);
+        } catch (UnexpectedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

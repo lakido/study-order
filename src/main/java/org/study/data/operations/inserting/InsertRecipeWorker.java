@@ -30,13 +30,10 @@ public class InsertRecipeWorker {
             singlePreparedStatementWrapper.setInt(3, recipeEntity.getPopularity());
             singlePreparedStatementWrapper.setInt(4, recipeEntity.getAgePreferences());
 
-            //insert ingredient's list
             insertListOfIngredients(ingredientEntityList);
 
-            //insert recipe
             singlePreparedStatementWrapper.executeUpdate();
 
-            //insert record in relation table
             createRecordInRelationTable(getRecipeId(recipeEntity), getListOfIngredientsId(ingredientEntityList));
 
             return 0;
@@ -93,7 +90,6 @@ public class InsertRecipeWorker {
                 count += singlePreparedStatementWrapper.executeUpdate();
             }
         } catch (FailedStatementException e) {
-            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         } catch (FailedConnectingException e) {
             throw new RuntimeException(e);

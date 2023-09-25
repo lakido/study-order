@@ -24,8 +24,12 @@ public class RecipeEntityExtractor {
             singlePreparedStatementWrapper.setInt(1, id);
 
             return singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
-        } catch (FailedConnectingException | UnexpectedException | FailedStatementException e) {
-            throw new RuntimeException(e);
+        } catch (FailedStatementException exception) {
+            throw new RuntimeException(exception);
+        } catch (FailedConnectingException exception) {
+            throw new RuntimeException(exception);
+        } catch (UnexpectedException exception) {
+            throw new RuntimeException(exception);
         }
     }
 
@@ -42,8 +46,12 @@ public class RecipeEntityExtractor {
             singlePreparedStatementWrapper.setString(1, name);
 
             return singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
-        } catch (FailedStatementException | FailedConnectingException | UnexpectedException e) {
-            throw new RuntimeException(e);
+        } catch (FailedStatementException exception) {
+            throw new RuntimeException(exception);
+        } catch (FailedConnectingException exception) {
+            throw new RuntimeException(exception);
+        } catch (UnexpectedException exception) {
+            throw new RuntimeException(exception);
         }
     }
 }
