@@ -13,10 +13,9 @@ import java.sql.PreparedStatement;
 public class UpdateIngredient {
     private final ConnectionWrapper connectionWrapper = ConnectionDatabaseSingleton.getInstance().getConnection();
 
-    public int updateIngredient(String oldName,String newName, String newRecommendation, int newCalories, int newWeight) {
+    public int updateIngredient(String oldName,String newName, String newRecommendation, int newCalories, int newWeight) throws FailedStatementException, UnexpectedException, FailedExecuteException, FailedConnectingException {
         String query = "UPDATE Ingredients SET name = ?, recommendation = ?, calories = ?, weight = ? WHERE name = ?";
 
-        try {
             PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
 
             SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
@@ -28,14 +27,5 @@ public class UpdateIngredient {
             singlePreparedStatementWrapper.setString(5, oldName);
 
             return singlePreparedStatementWrapper.executeUpdate();
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
-        } catch (FailedExecuteException e) {
-            throw new RuntimeException(e);
-        } catch (FailedStatementException e) {
-            throw new RuntimeException(e);
-        } catch (FailedConnectingException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

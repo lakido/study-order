@@ -9,39 +9,24 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DeleteRecipe {
-
+    //TODO all methods that can throw only my custom exceptions must be declared with throws in signature
     private final ConnectionWrapper connection = ConnectionDatabaseSingleton.getInstance().getConnection();
 
-    public int deleteRecipe(int id) {
+    public int deleteRecipe(int id) throws UnexpectedException, FailedExecuteException, FailedDeleteException, FailedConnectingException, FailedStatementException {
         String queryForRecipeDeletion = "DELETE FROM Recipe WHERE id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeDeletion);
 
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeDeletion);
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+        singlePreparedStatementWrapper.setInt(1, id);
 
-            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-
-            singlePreparedStatementWrapper.setInt(1, id);
-
-            if (deleteRelationRecord(id) != 0) {
-                return singlePreparedStatementWrapper.executeUpdate();
-            }
-
-            throw new FailedDeleteException();
-
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
-        } catch (FailedExecuteException e) {
-            throw new RuntimeException(e);
-        } catch (FailedDeleteException e) {
-            throw new RuntimeException(e);
-        } catch (FailedStatementException e) {
-            throw new RuntimeException(e);
-        } catch (FailedConnectingException e) {
-            throw new RuntimeException(e);
+        if (deleteRelationRecord(id) != 0) {
+            return singlePreparedStatementWrapper.executeUpdate();
         }
+
+        throw new FailedDeleteException();
     }
 
-    public int deleteRecipe(String name) {
+    public int deleteRecipe(String name) throws UnexpectedException {
         String queryForDeletion = "DELETE OR IGNORE FROM Recipe WHERE name = ?";
         String queryForSelectionIdOfDeletingRecords = "SELECT id FROM Recipe WHERE name = ?";
 
@@ -59,32 +44,18 @@ public class DeleteRecipe {
             }
 
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            throw new UnexpectedException();
         }
 
         return -1;
     }
 
-    private int deleteRelationRecord(int id) {
+    private int deleteRelationRecord(int id) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
         String queryForRecipeIngredientRelation = "DELETE OR IGNORE FROM Ingredients_Recipe WHERE id_recipe = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeIngredientRelation);
 
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeIngredientRelation);
-
-            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-
-            singlePreparedStatementWrapper.setInt(1, id);
-
-            return singlePreparedStatementWrapper.executeUpdate();
-
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
-        } catch (FailedExecuteException e) {
-            throw new RuntimeException(e);
-        } catch (FailedStatementException e) {
-            throw new RuntimeException(e);
-        } catch (FailedConnectingException e) {
-            throw new RuntimeException(e);
-        }
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+        singlePreparedStatementWrapper.setInt(1, id);
+        return singlePreparedStatementWrapper.executeUpdate();
     }
 }

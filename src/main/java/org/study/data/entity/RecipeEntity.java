@@ -39,10 +39,8 @@ public class RecipeEntity {
                     resultSet.getInt("popularity"),
                     resultSet.getInt("age_preferences"));
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new FailedReadException();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new UnexpectedException();
         }
     }

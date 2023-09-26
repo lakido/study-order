@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class DeleteIngredient {
     private final ConnectionWrapper connection = ConnectionDatabaseSingleton.getInstance().getConnection();
 
-    public void deleteIngredient(int id) {
+    public void deleteIngredient(int id) throws UnexpectedException {
         if (id == 0) id = 1;
 
         String query = "DELETE FROM Ingredients WHERE id = ?";
@@ -31,11 +31,13 @@ public class DeleteIngredient {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new UnexpectedException();
         }
     }
 
-    public int deleteIngredient(String name) {
+    //TODO if i have my exceptions with system exceptions in one method (SQLException), i should rethrow again my exceptions, but throw UnexpectedException if i catch SQLException
+
+    public int deleteIngredient(String name) throws UnexpectedException, FailedExecuteException, FailedStatementException {
         if (name == null || name.equals("")) throw new IllegalArgumentException("Empty string is invalid!");
 
         String queryForDeletionOfIngredientsWithName = "DELETE FROM Ingredients WHERE name = ?";
@@ -59,38 +61,21 @@ public class DeleteIngredient {
 
             throw new UnexpectedException();
 
-        } catch (UnexpectedException exception) {
-            throw new RuntimeException(exception);
-        } catch (FailedExecuteException exception) {
-            throw new RuntimeException(exception);
-        } catch (FailedStatementException exception) {
-            throw new RuntimeException(exception);
+        } catch (UnexpectedException | FailedExecuteException | FailedStatementException exception) {
+            throw exception;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new UnexpectedException();
         }
     }
 
-    private int deleteRelationIngredientRecipe(int id) {
+    private int deleteRelationIngredientRecipe(int id) throws UnexpectedException, FailedExecuteException, FailedConnectingException, FailedStatementException {
         if (id == 0) id = 1;
 
         String sql = "DELETE FROM Ingredients_Recipe WHERE id_ingredients = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-
-            singlePreparedStatementWrapper.setInt(1, id);
-
-            return singlePreparedStatementWrapper.executeUpdate();
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
-        } catch (FailedExecuteException e) {
-            throw new RuntimeException(e);
-        } catch (FailedStatementException e) {
-            throw new RuntimeException(e);
-        } catch (FailedConnectingException e) {
-            throw new RuntimeException(e);
-        }
+        singlePreparedStatementWrapper.setInt(1, id);
+        return singlePreparedStatementWrapper.executeUpdate();
     }
 }
