@@ -29,7 +29,10 @@ public class IngredientEntity {
         this.recommendation = recommendation;
     }
 
-    public static IngredientEntity getIngredientEntity(ResultSet resultSet) throws FailedReadException, UnexpectedException {
+    public static IngredientEntity getIngredientEntity(
+            ResultSet resultSet
+    ) throws FailedReadException, UnexpectedException {
+
         try {
             return new IngredientEntity(resultSet.getInt("id"),
                     resultSet.getString("name"),
@@ -47,10 +50,21 @@ public class IngredientEntity {
     public boolean equals(Object obj) {
         if (!(obj instanceof IngredientEntity tempEntity)) return false;
 
-        return tempEntity.getCalories() == this.getCalories() &&
+        return tempEntity.getId() == this.getId() &&
+                tempEntity.getCalories() == this.getCalories() &&
                 tempEntity.getName().equals(this.getName()) &&
                 tempEntity.getWeight() == this.getWeight() &&
                 tempEntity.getRecommendation().equals(this.getRecommendation());
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient Entity: [" +
+                "Id: " + this.getId() + ", " +
+                "Name: " + this.getName() + ", " +
+                "Calories: " + this.getCalories() + ", " +
+                "Weight: " + this.getWeight() + ", " +
+                "Recommendation: " + this.getRecommendation() + "]";
     }
 
     public int getId() {

@@ -1,6 +1,5 @@
 package org.study.data.operations.deletion;
 
-import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.connection.ConnectionWrapper;
 import org.study.data.exceptions.*;
 import org.study.data.operations.SinglePreparedStatementWrapper;
@@ -9,10 +8,17 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DeleteRecipe {
-    //TODO all methods that can throw only my custom exceptions must be declared with throws in signature
-    private final ConnectionWrapper connection = ConnectionDatabaseSingleton.getInstance().getConnection();
 
-    public int deleteRecipe(int id) throws UnexpectedException, FailedExecuteException, FailedDeleteException, FailedConnectingException, FailedStatementException {
+    private final ConnectionWrapper connection;
+
+    public DeleteRecipe(ConnectionWrapper connection) {
+        this.connection = connection;
+    }
+
+    public int deleteRecipe(
+            int id
+    ) throws UnexpectedException, FailedExecuteException, FailedConnectingException, FailedStatementException {
+
         String queryForRecipeDeletion = "DELETE FROM Recipe WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeDeletion);
 
@@ -23,7 +29,7 @@ public class DeleteRecipe {
             return singlePreparedStatementWrapper.executeUpdate();
         }
 
-        throw new FailedDeleteException();
+        return -1;
     }
 
     public int deleteRecipe(String name) throws UnexpectedException {
@@ -50,12 +56,16 @@ public class DeleteRecipe {
         return -1;
     }
 
-    private int deleteRelationRecord(int id) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
+    private int deleteRelationRecord(
+            int id
+    ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
+
         String queryForRecipeIngredientRelation = "DELETE OR IGNORE FROM Ingredients_Recipe WHERE id_recipe = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(queryForRecipeIngredientRelation);
 
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setInt(1, id);
+
         return singlePreparedStatementWrapper.executeUpdate();
     }
 }

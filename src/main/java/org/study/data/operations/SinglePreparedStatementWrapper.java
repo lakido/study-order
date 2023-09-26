@@ -23,7 +23,6 @@ public class SinglePreparedStatementWrapper {
         try {
             preparedStatement.setInt(position, i);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new FailedStatementException();
         }
     }
@@ -40,20 +39,17 @@ public class SinglePreparedStatementWrapper {
         try {
             return preparedStatement.executeQuery();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new FailedExecuteException();
         } finally {
             closeStatement();
         }
     }
 
-    public RecipeEntity executeQueryToGetRecipeEntity() throws UnexpectedException {
+    public RecipeEntity executeQueryToGetRecipeEntity() throws UnexpectedException, FailedReadException {
         try {
             return RecipeEntity.getRecipeEntity(preparedStatement.executeQuery());
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
-        } catch (FailedReadException e) {
-            throw new RuntimeException(e);
+        } catch (UnexpectedException | FailedReadException  e) {
+            throw e;
         } catch (SQLException e) {
             throw new UnexpectedException();
         } finally {
@@ -61,15 +57,13 @@ public class SinglePreparedStatementWrapper {
         }
     }
 
-    public IngredientEntity executeQueryToGetIngredientsEntity() throws UnexpectedException {
+    public IngredientEntity executeQueryToGetIngredientsEntity() throws UnexpectedException, FailedReadException {
         try {
             return IngredientEntity.getIngredientEntity(preparedStatement.executeQuery());
-        } catch (FailedReadException e) {
-            throw new RuntimeException(e);
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
+        } catch (UnexpectedException | FailedReadException  e) {
+            throw e;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new UnexpectedException();
         } finally {
             closeStatement();
         }
@@ -79,7 +73,6 @@ public class SinglePreparedStatementWrapper {
         try {
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new FailedExecuteException();
         } finally {
             closeStatement();

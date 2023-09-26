@@ -1,6 +1,5 @@
 package org.study.data.operations.inserting;
 
-import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.connection.ConnectionWrapper;
 import org.study.data.entity.IngredientEntity;
 import org.study.data.entity.RecipeEntity;
@@ -14,39 +13,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InsertRecipeWorker {
-    private final ConnectionWrapper connectionWrapper = ConnectionDatabaseSingleton.getInstance().getConnection();
+    private final ConnectionWrapper connection;
 
-    public int insertRecipe(RecipeEntity recipeEntity, List<IngredientEntity> ingredientEntityList) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
+    public InsertRecipeWorker(ConnectionWrapper connection) {
+        this.connection = connection;
+    }
+
+    public int insertRecipe(
+            RecipeEntity recipeEntity, List<IngredientEntity> ingredientEntityList
+    ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException, FailedReadException {
         String query = "INSERT OR IGNORE INTO Recipe (name, category, popularity, age_preferences)" +
                 "VALUES (?, ?, ?, ?)";
 
-        try {
-            PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
-            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+        singlePreparedStatementWrapper.setString(1, recipeEntity.getName());
+        singlePreparedStatementWrapper.setString(2, recipeEntity.getCategory());
+        singlePreparedStatementWrapper.setInt(3, recipeEntity.getPopularity());
+        singlePreparedStatementWrapper.setInt(4, recipeEntity.getAgePreferences());
 
-            singlePreparedStatementWrapper.setString(1, recipeEntity.getName());
-            singlePreparedStatementWrapper.setString(2, recipeEntity.getCategory());
-            singlePreparedStatementWrapper.setInt(3, recipeEntity.getPopularity());
-            singlePreparedStatementWrapper.setInt(4, recipeEntity.getAgePreferences());
+        insertListOfIngredients(ingredientEntityList);
 
-            insertListOfIngredients(ingredientEntityList);
+        singlePreparedStatementWrapper.executeUpdate();
 
-            singlePreparedStatementWrapper.executeUpdate();
+        createRecordInRelationTable(getRecipeId(recipeEntity), getListOfIngredientsId(ingredientEntityList));
 
-            createRecordInRelationTable(getRecipeId(recipeEntity), getListOfIngredientsId(ingredientEntityList));
-
-            return 0;
-        } catch (FailedStatementException | FailedConnectingException | UnexpectedException | FailedExecuteException exception) {
-            throw exception;
-        }
+        return 0;
     }
 
-    private int insertListOfIngredients(List<IngredientEntity> ingredientEntityList) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
-        InsertIngredientWorker insertIngredientWorker = new InsertIngredientWorker();
+    private int insertListOfIngredients(
+            List<IngredientEntity> ingredientEntityList
+    ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
+
+        InsertIngredientWorker insertIngredientWorker = new InsertIngredientWorker(connection);
+
         int count = 0;
 
-        for (IngredientEntity entity: ingredientEntityList) {
+        for (IngredientEntity entity : ingredientEntityList) {
             if (insertIngredientWorker.insertIngredient(entity) == 1) {
                 count++;
             }
@@ -55,48 +59,45 @@ public class InsertRecipeWorker {
         return count;
     }
 
-    private List<Integer> getListOfIngredientsId(List<IngredientEntity> ingredients) throws UnexpectedException, FailedStatementException, FailedConnectingException {
+    private List<Integer> getListOfIngredientsId(
+            List<IngredientEntity> ingredients
+    ) throws UnexpectedException, FailedStatementException, FailedConnectingException, FailedReadException {
+
         List<Integer> resultList = new ArrayList<>();
 
-        IngredientEntityExtractor ingredientEntityExtractor = new IngredientEntityExtractor();
+        IngredientEntityExtractor ingredientEntityExtractor = new IngredientEntityExtractor(connection);
 
-        for (IngredientEntity entity: ingredients) {
+        for (IngredientEntity entity : ingredients) {
             resultList.add(ingredientEntityExtractor.extractIngredientFromDatabase(entity.getName()).getId());
         }
 
         return resultList;
     }
 
-    private int getRecipeId(RecipeEntity recipeEntity) {
-        RecipeEntityExtractor recipeEntityExtractor = new RecipeEntityExtractor();
+    private int getRecipeId(
+            RecipeEntity recipeEntity
+    ) throws UnexpectedException, FailedStatementException, FailedConnectingException, FailedReadException {
+
+        RecipeEntityExtractor recipeEntityExtractor = new RecipeEntityExtractor(connection);
 
         return recipeEntityExtractor.extractRecipeFromDataBase(recipeEntity.getName()).getId();
     }
 
-    private int createRecordInRelationTable(int recipeId, List<Integer> listWithRecipesId) {
+    private int createRecordInRelationTable(
+            int recipeId, List<Integer> listWithRecipesId
+    ) throws FailedConnectingException, FailedStatementException, UnexpectedException, FailedExecuteException {
+
         String query = "INSERT INTO Ingredients_Recipe (id_recipe, id_ingredients) VALUES (?, ?)";
         int count = 0;
 
-        try {
+        for (int value : listWithRecipesId) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
+            singlePreparedStatementWrapper.setInt(1, recipeId);
+            singlePreparedStatementWrapper.setInt(2, value);
 
-            for (int value: listWithRecipesId) {
-                PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
-                SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-
-                singlePreparedStatementWrapper.setInt(1, recipeId);
-                singlePreparedStatementWrapper.setInt(2, value);
-
-                count += singlePreparedStatementWrapper.executeUpdate();
-            }
-        } catch (FailedStatementException e) {
-            throw new RuntimeException(e);
-        } catch (FailedConnectingException e) {
-            throw new RuntimeException(e);
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
-        } catch (FailedExecuteException e) {
-            throw new RuntimeException(e);
+            count += singlePreparedStatementWrapper.executeUpdate();
         }
 
         return count;

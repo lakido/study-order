@@ -9,30 +9,30 @@ import org.study.data.operations.SinglePreparedStatementWrapper;
 
 import java.sql.PreparedStatement;
 
-public class UpdateRecipe {
+public class IngredientUpdateWorker {
     private final ConnectionWrapper connectionWrapper;
 
-    public UpdateRecipe(ConnectionWrapper connectionWrapper) {
+    public IngredientUpdateWorker(ConnectionWrapper connectionWrapper) {
         this.connectionWrapper = connectionWrapper;
     }
 
-    public int updateRecipe(
+    public int updateIngredient(
             String oldName,
             String newName,
-            String newCategory,
-            int newPopularity,
-            int newAgePreferences
-    ) throws FailedStatementException, FailedConnectingException, UnexpectedException, FailedExecuteException {
+            String newRecommendation,
+            int newCalories,
+            int newWeight
+    ) throws FailedStatementException, UnexpectedException, FailedExecuteException, FailedConnectingException {
 
-        String query = "UPDATE Recipe SET name = ?, category = ?, popularity = ?, age_preferences = ? WHERE name = ?";
+        String query = "UPDATE Ingredients SET name = ?, recommendation = ?, calories = ?, weight = ? WHERE name = ?";
+
         PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
-
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
         singlePreparedStatementWrapper.setString(1, newName);
-        singlePreparedStatementWrapper.setString(2, newCategory);
-        singlePreparedStatementWrapper.setInt(3, newPopularity);
-        singlePreparedStatementWrapper.setInt(4, newAgePreferences);
+        singlePreparedStatementWrapper.setString(2, newRecommendation);
+        singlePreparedStatementWrapper.setInt(3, newCalories);
+        singlePreparedStatementWrapper.setInt(4, newWeight);
         singlePreparedStatementWrapper.setString(5, oldName);
 
         return singlePreparedStatementWrapper.executeUpdate();

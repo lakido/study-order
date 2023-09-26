@@ -14,8 +14,6 @@ public class RecipeEntity {
     private final int popularity;
     private final int agePreferences;
 
-    //TODO rework the system of exception everywhere
-
     public RecipeEntity(String name, String category, int popularity, int agePreferences) {
         this.name = name;
         this.category = category;
@@ -31,7 +29,10 @@ public class RecipeEntity {
         this.agePreferences = agePreferences;
     }
 
-    public static RecipeEntity getRecipeEntity(ResultSet resultSet) throws UnexpectedException, FailedReadException {
+    public static RecipeEntity getRecipeEntity(
+            ResultSet resultSet
+    ) throws UnexpectedException, FailedReadException {
+
         try {
             return new RecipeEntity(resultSet.getInt("id"),
                     resultSet.getString("name"),
@@ -49,10 +50,21 @@ public class RecipeEntity {
     public boolean equals(Object obj) {
         if (!(obj instanceof RecipeEntity tempEntity)) return false;
 
-        return this.getName().equals(tempEntity.getName()) &&
+        return this.getId() == tempEntity.getId() &&
+                this.getName().equals(tempEntity.getName()) &&
                 this.getCategory().equals(tempEntity.getCategory()) &&
                 this.getAgePreferences() == (tempEntity.getAgePreferences()) &&
                 this.getPopularity() == (tempEntity.getPopularity());
+    }
+
+    @Override
+    public String toString() {
+        return "Recipe Entity: [" +
+                "Id: " + this.getId() + ", " +
+                "Name: " + this.getName() + ", " +
+                "Category: " + this.getCategory() + ", " +
+                "Popularity: " + this.getPopularity() + ", " +
+                "Age Preferences: " + this.getAgePreferences() + "]";
     }
 
     public int getId() {

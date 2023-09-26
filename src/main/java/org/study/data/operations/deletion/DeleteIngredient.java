@@ -1,6 +1,5 @@
 package org.study.data.operations.deletion;
 
-import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.connection.ConnectionWrapper;
 import org.study.data.exceptions.FailedConnectingException;
 import org.study.data.exceptions.FailedExecuteException;
@@ -12,33 +11,33 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DeleteIngredient {
-    private final ConnectionWrapper connection = ConnectionDatabaseSingleton.getInstance().getConnection();
+
+    private final ConnectionWrapper connection;
+
+    public DeleteIngredient(ConnectionWrapper connection) {
+        this.connection = connection;
+    }
 
     public void deleteIngredient(int id) throws UnexpectedException {
-        if (id == 0) id = 1;
-
         String query = "DELETE FROM Ingredients WHERE id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-
             singlePreparedStatementWrapper.setInt(1, id);
 
             deleteRelationIngredientRecipe(id);
 
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             throw new UnexpectedException();
         }
     }
 
-    //TODO if i have my exceptions with system exceptions in one method (SQLException), i should rethrow again my exceptions, but throw UnexpectedException if i catch SQLException
-
-    public int deleteIngredient(String name) throws UnexpectedException, FailedExecuteException, FailedStatementException {
-        if (name == null || name.equals("")) throw new IllegalArgumentException("Empty string is invalid!");
+    public int deleteIngredient(
+            String name
+    ) throws UnexpectedException, FailedExecuteException, FailedStatementException {
 
         String queryForDeletionOfIngredientsWithName = "DELETE FROM Ingredients WHERE name = ?";
         String queryForSelectionIdFromIngredientsWithName = "SELECT id FROM Ingredients WHERE name = ?";
@@ -54,13 +53,12 @@ public class DeleteIngredient {
 
             int deletedRecordId = preparedStatementForDeletionOfRelation.executeQuery().getInt("id");
 
-            if ( deleteRelationIngredientRecipe(deletedRecordId) != 0) {
+            if (deleteRelationIngredientRecipe(deletedRecordId) != 0) {
                 singlePreparedStatementWrapper.executeUpdate();
                 return 0;
             }
 
-            throw new UnexpectedException();
-
+            return -1;
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException exception) {
             throw exception;
         } catch (SQLException e) {
@@ -68,14 +66,16 @@ public class DeleteIngredient {
         }
     }
 
-    private int deleteRelationIngredientRecipe(int id) throws UnexpectedException, FailedExecuteException, FailedConnectingException, FailedStatementException {
-        if (id == 0) id = 1;
+    private int deleteRelationIngredientRecipe(
+            int id
+    ) throws UnexpectedException, FailedExecuteException, FailedConnectingException, FailedStatementException {
 
         String sql = "DELETE FROM Ingredients_Recipe WHERE id_ingredients = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setInt(1, id);
+
         return singlePreparedStatementWrapper.executeUpdate();
     }
 }
