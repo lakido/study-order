@@ -17,14 +17,14 @@ public class IngredientUpdateWorker {
     }
 
     public int updateIngredient(
-            String oldName,
+            int id,
             String newName,
             String newRecommendation,
             int newCalories,
             int newWeight
     ) throws FailedStatementException, UnexpectedException, FailedExecuteException, FailedConnectingException {
 
-        String query = "UPDATE Ingredients SET name = ?, recommendation = ?, calories = ?, weight = ? WHERE name = ?";
+        String query = "UPDATE Ingredients SET name = ?, recommendation = ?, calories = ?, weight = ? WHERE id = ?";
 
         PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
@@ -33,7 +33,7 @@ public class IngredientUpdateWorker {
         singlePreparedStatementWrapper.setString(2, newRecommendation);
         singlePreparedStatementWrapper.setInt(3, newCalories);
         singlePreparedStatementWrapper.setInt(4, newWeight);
-        singlePreparedStatementWrapper.setString(5, oldName);
+        singlePreparedStatementWrapper.setInt(5, id);
 
         return singlePreparedStatementWrapper.executeUpdate();
     }

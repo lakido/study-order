@@ -9,6 +9,8 @@ import org.study.data.exceptions.UnexpectedException;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class RecipeEntityExtractor {
     private final ConnectionWrapper connection;
@@ -17,9 +19,10 @@ public class RecipeEntityExtractor {
         this.connection = connection;
     }
 
-    public RecipeEntity extractRecipeFromDataBase(
+    public RecipeEntity extractRecipeFromDatabase(
             int id
     ) throws FailedConnectingException, FailedStatementException, UnexpectedException, FailedReadException {
+        RecipeEntity recipeEntity = null;
 
         String query = "SELECT * FROM Recipe WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -27,12 +30,18 @@ public class RecipeEntityExtractor {
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setInt(1, id);
 
-        return singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
+        recipeEntity = createEntityFromResultSet(resultSet);
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return recipeEntity;
     }
 
-    public RecipeEntity extractRecipeFromDataBase(
+    public RecipeEntity extractRecipeFromDatabase(
             String name
     ) throws FailedConnectingException, UnexpectedException, FailedStatementException, FailedReadException {
+        RecipeEntity recipeEntity = null;
 
         String query = "SELECT * FROM Recipe WHERE name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -40,6 +49,22 @@ public class RecipeEntityExtractor {
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setString(1, name);
 
-        return singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
+        recipeEntity = createEntityFromResultSet(resultSet);
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return recipeEntity;
+    }
+
+    private RecipeEntity createEntityFromResultSet(ResultSet resultSet) throws UnexpectedException {
+        RecipeEntity recipeEntity = null;
+
+        try {
+            recipeEntity = RecipeEntity.getRecipeEntity(resultSet);
+        } catch (SQLException exception) {
+            throw new UnexpectedException();
+        }
+        return recipeEntity;
     }
 }

@@ -9,22 +9,22 @@ import org.study.data.operations.SinglePreparedStatementWrapper;
 
 import java.sql.PreparedStatement;
 
-public class UpdateRecipe {
+public class RecipeUpdateWorker {
     private final ConnectionWrapper connectionWrapper;
 
-    public UpdateRecipe(ConnectionWrapper connectionWrapper) {
+    public RecipeUpdateWorker(ConnectionWrapper connectionWrapper) {
         this.connectionWrapper = connectionWrapper;
     }
 
     public int updateRecipe(
-            String oldName,
+            int id,
             String newName,
             String newCategory,
             int newPopularity,
             int newAgePreferences
     ) throws FailedStatementException, FailedConnectingException, UnexpectedException, FailedExecuteException {
 
-        String query = "UPDATE Recipe SET name = ?, category = ?, popularity = ?, age_preferences = ? WHERE name = ?";
+        String query = "UPDATE Recipe SET name = ?, category = ?, popularity = ?, age_preferences = ? WHERE id = ?";
         PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
 
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
@@ -33,7 +33,7 @@ public class UpdateRecipe {
         singlePreparedStatementWrapper.setString(2, newCategory);
         singlePreparedStatementWrapper.setInt(3, newPopularity);
         singlePreparedStatementWrapper.setInt(4, newAgePreferences);
-        singlePreparedStatementWrapper.setString(5, oldName);
+        singlePreparedStatementWrapper.setInt(5, id);
 
         return singlePreparedStatementWrapper.executeUpdate();
     }

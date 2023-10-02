@@ -6,6 +6,8 @@ import org.study.data.exceptions.*;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class IngredientEntityExtractor {
     private final ConnectionWrapper connection;
@@ -24,19 +26,42 @@ public class IngredientEntityExtractor {
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setInt(1, id);
 
-        return singlePreparedStatementWrapper.executeQueryToGetIngredientsEntity();
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetIngredientsEntity();
+
+        IngredientEntity ingredientEntity = createIngredientEntity(resultSet);
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return ingredientEntity;
     }
 
     public IngredientEntity extractIngredientFromDatabase(
             String name
     ) throws FailedStatementException, FailedConnectingException, UnexpectedException, FailedReadException {
-
         String query = "SELECT * FROM Ingredients WHERE name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setString(1, name);
 
-        return singlePreparedStatementWrapper.executeQueryToGetIngredientsEntity();
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetIngredientsEntity();
+
+        IngredientEntity ingredientEntity = createIngredientEntity(resultSet);
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return ingredientEntity;
+    }
+
+    private IngredientEntity createIngredientEntity(ResultSet resultSet) throws UnexpectedException {
+        IngredientEntity ingredientEntity = null;
+
+        try {
+            ingredientEntity = IngredientEntity.getIngredientEntity(resultSet);
+            return ingredientEntity;
+
+        } catch (SQLException exception) {
+            throw new UnexpectedException();
+        }
     }
 }

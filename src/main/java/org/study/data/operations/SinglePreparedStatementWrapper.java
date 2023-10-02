@@ -2,6 +2,7 @@ package org.study.data.operations;
 
 import org.study.data.entity.IngredientEntity;
 import org.study.data.entity.RecipeEntity;
+import org.study.data.entity.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.FailedExecuteException;
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.FailedStatementException;
@@ -22,7 +23,7 @@ public class SinglePreparedStatementWrapper {
     public void setInt(int position, int i) throws FailedStatementException {
         try {
             preparedStatement.setInt(position, i);
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             throw new FailedStatementException();
         }
     }
@@ -30,38 +31,44 @@ public class SinglePreparedStatementWrapper {
     public void setString(int position, String str) throws FailedStatementException {
         try {
             preparedStatement.setString(position, str);
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             throw new FailedStatementException();
         }
     }
 
-    public ResultSet executeQuery() throws FailedExecuteException, UnexpectedException {
+    public ResultSet executeQuery() throws FailedExecuteException {
         try {
             return preparedStatement.executeQuery();
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             throw new FailedExecuteException();
-        } finally {
-            closeStatement();
         }
     }
 
-    public RecipeEntity executeQueryToGetRecipeEntity() throws UnexpectedException, FailedReadException {
+    public ResultSet executeQueryToGetRecipeEntity() throws UnexpectedException, FailedReadException {
         try {
-            return RecipeEntity.getRecipeEntity(preparedStatement.executeQuery());
-        } catch (UnexpectedException | FailedReadException  e) {
-            throw e;
+            return preparedStatement.executeQuery();
+        } catch (FailedReadException exception) {
+            throw exception;
         } catch (SQLException e) {
             throw new UnexpectedException();
-        } finally {
-            closeStatement();
         }
     }
 
-    public IngredientEntity executeQueryToGetIngredientsEntity() throws UnexpectedException, FailedReadException {
+    public ResultSet executeQueryToGetIngredientsEntity() throws UnexpectedException, FailedReadException {
         try {
-            return IngredientEntity.getIngredientEntity(preparedStatement.executeQuery());
-        } catch (UnexpectedException | FailedReadException  e) {
-            throw e;
+            return preparedStatement.executeQuery();
+        } catch (FailedReadException exception) {
+            throw exception;
+        } catch (SQLException e) {
+            throw new UnexpectedException();
+        }
+    }
+
+    public ResultSet executeQueryToGetRelationIngredientRecipeEntity() throws UnexpectedException, FailedReadException {
+        try {
+            return preparedStatement.executeQuery();
+        } catch (FailedReadException exception) {
+            throw exception;
         } catch (SQLException e) {
             throw new UnexpectedException();
         } finally {
@@ -72,17 +79,19 @@ public class SinglePreparedStatementWrapper {
     public int executeUpdate() throws FailedExecuteException, UnexpectedException {
         try {
             return preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             throw new FailedExecuteException();
         } finally {
             closeStatement();
         }
     }
 
-    private void closeStatement() throws UnexpectedException{
+    public void closeStatement() throws UnexpectedException {
         try {
-            preparedStatement.close();
-        } catch (SQLException e) {
+            if (!preparedStatement.isClosed()) {
+                preparedStatement.close();
+            }
+        } catch (SQLException exception) {
             throw new UnexpectedException();
         }
     }
