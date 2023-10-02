@@ -1,7 +1,6 @@
 package org.study.data.operations.inserting;
 
 import org.study.data.connection.ConnectionWrapper;
-import org.study.data.entity.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 

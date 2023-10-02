@@ -29,7 +29,7 @@ public class RelationIngredientRecipeEntity {
         try {
             return new RelationIngredientRecipeEntity(resultSet.getInt("id"),
                                                       resultSet.getInt("id_recipe"),
-                                                      resultSet.getInt("id_ingredient"));
+                                                      resultSet.getInt("id_ingredients"));
         } catch (SQLException exception) {
             throw new FailedReadException();
         } catch (Exception exception) {
@@ -51,9 +51,9 @@ public class RelationIngredientRecipeEntity {
 
     @Override
     public String toString() {
-        return "Relation Ingredient Recipe Entity: [" +
-                "Record id: " + this.getId() +
-                "Recipe id: " + this.getIdRecipe() +
+        return "Relation Ingredient-Recipe Entity: [" +
+                "Record id: " + this.getId() + "; " +
+                "Recipe id: " + this.getIdRecipe() + "; " +
                 "Ingredient id: " + this.getIdIngredient() + "]";
     }
 
