@@ -36,23 +36,36 @@ public class IngredientInsertWorker {
         singlePreparedStatementWrapper.setInt(3, weight);
         singlePreparedStatementWrapper.setString(4, recommendation);
 
-        return singlePreparedStatementWrapper.executeUpdate();
+        int rowsChanged = singlePreparedStatementWrapper.executeUpdate();
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return rowsChanged;
     }
 
     public int insertListOfIngredients(
             List<IngredientEntity> ingredientEntityList
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
 
-        IngredientInsertWorker ingredientInsertWorker = new IngredientInsertWorker(connection);
+        String query = "INSERT OR IGNORE INTO Ingredients (name, calories, weight, recommendation)" +
+                " VALUES (?, ?, ?, ?)";
 
-        int count = 0;
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
-        for (IngredientEntity entity : ingredientEntityList) {
-            if (ingredientInsertWorker.insertIngredient(entity.getName(), entity.getCalories(), entity.getWeight(), entity.getRecommendation()) == 1) {
-                count++;
-            }
+        int rowsChanged = 0;
+
+        for (IngredientEntity ingredientEntity : ingredientEntityList) {
+            singlePreparedStatementWrapper.setString(1, ingredientEntity.getName());
+            singlePreparedStatementWrapper.setInt(2, ingredientEntity.getCalories());
+            singlePreparedStatementWrapper.setInt(3, ingredientEntity.getWeight());
+            singlePreparedStatementWrapper.setString(4, ingredientEntity.getRecommendation());
+
+            rowsChanged += singlePreparedStatementWrapper.executeUpdate();
         }
 
-        return count;
+        singlePreparedStatementWrapper.closeStatement();
+
+        return rowsChanged;
     }
 }
