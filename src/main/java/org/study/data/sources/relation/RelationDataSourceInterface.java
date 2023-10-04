@@ -8,9 +8,11 @@ import java.util.List;
 public interface RelationDataSourceInterface {
     int insertRelationRecordRecipeIngredientById(int recipeId, int ingredientId) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
-    RelationIngredientRecipeEntity extractRelationRecordRecipeIngredientById(int recipeId, int ingredientId) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
+    RelationIngredientRecipeEntity extractRelationByRecipeIdAndIngredientId(int recipeId, int ingredientId) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
 
     List<RelationIngredientRecipeEntity> extractListOfRelationIngredientEntitiesByRecipeId(int recipeId) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
     List<RelationIngredientRecipeEntity> extractListOfRelationIngredientEntitiesByIngredientId(int ingredientId) throws FailedExecuteException, FailedStatementException, FailedConnectingException, UnexpectedException;
+
+
 }

@@ -1,7 +1,6 @@
 package org.study.data.sources.ingredient;
 
 import org.study.data.entity.IngredientEntity;
-import org.study.data.entity.RecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.changing.IngredientUpdateWorker;
 import org.study.data.operations.deletion.IngredientDeleteWorker;
@@ -43,31 +42,31 @@ public class IngredientDataSource implements IngredientDataSourceInterface{
     }
 
     @Override
-    public int deleteIngredient(
+    public int deleteIngredientById(
             int id
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
-        return ingredientDeleteWorker.deleteIngredient(id);
+        return ingredientDeleteWorker.deleteIngredientById(id);
     }
 
     @Override
-    public int deleteIngredient(
+    public int deleteIngredientByName(
             String name
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
-        return ingredientDeleteWorker.deleteIngredient(name);
+        return ingredientDeleteWorker.deleteIngredientByName(name);
     }
 
     @Override
     public IngredientEntity extractRecipeEntityById(
             int id
     ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
-        return ingredientEntityExtractor.extractIngredientFromDatabase(id);
+        return ingredientEntityExtractor.extractIngredientFromDatabaseById(id);
     }
 
     @Override
     public IngredientEntity extractRecipeEntityByName(
             String name
     ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
-        return ingredientEntityExtractor.extractIngredientFromDatabase(name);
+        return ingredientEntityExtractor.extractIngredientFromDatabaseByName(name);
     }
 
     @Override

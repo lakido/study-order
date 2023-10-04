@@ -25,23 +25,23 @@ public class RelationDataSource implements RelationDataSourceInterface {
     }
 
     @Override
-    public RelationIngredientRecipeEntity extractRelationRecordRecipeIngredientById(
+    public RelationIngredientRecipeEntity extractRelationByRecipeIdAndIngredientId(
             int recipeId, int ingredientId
     ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
-        return relationRecordExtractor.extractRelationRecipeIngredientRecord(recipeId, ingredientId);
+        return relationRecordExtractor.extractRelationByIngredientIdAndRecipeId(recipeId, ingredientId);
     }
 
     @Override
     public List<RelationIngredientRecipeEntity> extractListOfRelationIngredientEntitiesByRecipeId(
             int recipeId
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
-        return relationRecordExtractor.extractRelationRecipeIngredientInRecordsByRecipeIdInList(recipeId);
+        return relationRecordExtractor.extractRelationToListByRecipe(recipeId);
     }
 
     @Override
     public List<RelationIngredientRecipeEntity> extractListOfRelationIngredientEntitiesByIngredientId(
             int ingredientId
     ) throws FailedExecuteException, FailedStatementException, FailedConnectingException, UnexpectedException {
-        return relationRecordExtractor.extractRelationRecipeIngredientInRecordsByRecipeIdInList(ingredientId);
+        return relationRecordExtractor.extractRelationToListByIngredient(ingredientId);
     }
 }

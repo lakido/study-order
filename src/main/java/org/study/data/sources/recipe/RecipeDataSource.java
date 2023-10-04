@@ -40,17 +40,17 @@ public class RecipeDataSource implements RecipeDataSourceInterface {
     }
 
     @Override
-    public int deleteRecipe(
+    public int deleteRecipeByName(
             String name
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
-        return recipeDeleteWorker.deleteRecipe(name);
+        return recipeDeleteWorker.deleteRecipeByName(name);
     }
 
     @Override
-    public int deleteRecipe(
+    public int deleteRecipeById(
             int id
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
-        return recipeDeleteWorker.deleteRecipe(id);
+        return recipeDeleteWorker.deleteRecipeById(id);
     }
 
     @Override

@@ -5,13 +5,11 @@ import org.study.data.exceptions.*;
 
 public interface RecipeDataSourceInterface {
 
-    int updateRecipe(
-            RecipeEntity recipeEntity
-    ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
+    int updateRecipe(RecipeEntity recipeEntity) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
-    int deleteRecipe(String name) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
+    int deleteRecipeByName(String name) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
-    int deleteRecipe(int id) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
+    int deleteRecipeById(int id) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
     RecipeEntity extractRecipeEntityById(int id) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
 
