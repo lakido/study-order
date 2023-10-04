@@ -35,6 +35,10 @@ public class IngredientUpdateWorker {
         singlePreparedStatementWrapper.setInt(4, newWeight);
         singlePreparedStatementWrapper.setInt(5, id);
 
-        return singlePreparedStatementWrapper.executeUpdate();
+        int rowsChanged = singlePreparedStatementWrapper.executeUpdate();
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return rowsChanged;
     }
 }

@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO this class returns only one row of database. but what should i do, if i have multiply rows with the same values in id_recipe and id_ingredient
-//TODO need to add two methods to get entity of relation record. one method should accept id_recipe, the other should accept id_ingredient
 public class RelationRecordExtractor {
     private final ConnectionWrapper connection;
 
@@ -20,30 +18,29 @@ public class RelationRecordExtractor {
         this.connection = connection;
     }
 
-    public RelationIngredientRecipeEntity extractRelationRecipeIngredientRecord(
-            int idRecipe,
-            int idIngredient
+    public RelationIngredientRecipeEntity extractRelationByIngredientIdAndRecipeId(
+            int recipeId,
+            int ingredientId
     ) throws UnexpectedException, FailedConnectingException, FailedStatementException, FailedReadException {
-        RelationIngredientRecipeEntity relationIngredientRecipeEntity;
 
         String query = "SELECT * FROM Ingredients_Recipe WHERE id_recipe = ? AND id_ingredients = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-        singlePreparedStatementWrapper.setInt(1, idRecipe);
-        singlePreparedStatementWrapper.setInt(2, idIngredient);
+        singlePreparedStatementWrapper.setInt(1, recipeId);
+        singlePreparedStatementWrapper.setInt(2, ingredientId);
 
         ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetRelationIngredientRecipeEntity();
 
-        relationIngredientRecipeEntity = extractRelationIngredientRecipeEntity(resultSet);
+        RelationIngredientRecipeEntity relationIngredientRecipeEntity = extractRelationIngredientRecipeEntity(resultSet);
 
         singlePreparedStatementWrapper.closeStatement();
 
         return relationIngredientRecipeEntity;
     }
 
-    public List<RelationIngredientRecipeEntity> extractRelationRecipeIngredientInRecordsByRecipeIdInList(
-            int idRecipe
+    public List<RelationIngredientRecipeEntity> extractRelationToListByRecipe(
+            int recipeId
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
         List<RelationIngredientRecipeEntity> relationIngredientRecipeEntityList = new ArrayList<>();
 
@@ -51,35 +48,53 @@ public class RelationRecordExtractor {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-        singlePreparedStatementWrapper.setInt(1, idRecipe);
+        singlePreparedStatementWrapper.setInt(1, recipeId);
 
-       ResultSet resultSet = singlePreparedStatementWrapper.executeQuery();
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQuery();
 
-       try {
-           while (resultSet.next()) {
-               relationIngredientRecipeEntityList.add(new RelationIngredientRecipeEntity(
-                       resultSet.getInt("id_recipe"),
-                       resultSet.getInt("id_ingredients")
-               ));
-           }
-       } catch (SQLException exception) {
-           throw new UnexpectedException();
-       }
+        try {
+            while (resultSet.next()) {
+                relationIngredientRecipeEntityList.add(new RelationIngredientRecipeEntity(
+                        resultSet.getInt("id_recipe"),
+                        resultSet.getInt("id_ingredients")
+                ));
+            }
+        } catch (SQLException exception) {
+            throw new UnexpectedException();
+        }
 
-       singlePreparedStatementWrapper.closeStatement();
-       return relationIngredientRecipeEntityList;
+        singlePreparedStatementWrapper.closeStatement();
+
+        return relationIngredientRecipeEntityList;
     }
 
-    public ResultSet extractRelationRecipeIngredientRecordsInResultSetByIngredientId(
-            int idIngredient
-    ) throws FailedStatementException, FailedExecuteException, FailedConnectingException {
+    public List<RelationIngredientRecipeEntity> extractRelationToListByIngredient(
+            int ingredientId
+    ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
+        List<RelationIngredientRecipeEntity> relationIngredientRecipeEntityList = new ArrayList<>();
+
         String query = "SELECT * FROM Ingredients_Recipe WHERE id_ingredients = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
-        singlePreparedStatementWrapper.setInt(1, idIngredient);
+        singlePreparedStatementWrapper.setInt(1, ingredientId);
 
-        return singlePreparedStatementWrapper.executeQuery();
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQuery();
+
+        try {
+            while (resultSet.next()) {
+                relationIngredientRecipeEntityList.add(new RelationIngredientRecipeEntity(
+                        resultSet.getInt("id_recipe"),
+                        resultSet.getInt("id_ingredients")
+                ));
+            }
+        } catch (SQLException exception) {
+            throw new UnexpectedException();
+        }
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return relationIngredientRecipeEntityList;
     }
 
     private RelationIngredientRecipeEntity extractRelationIngredientRecipeEntity(ResultSet resultSet) throws UnexpectedException {

@@ -35,6 +35,10 @@ public class RecipeUpdateWorker {
         singlePreparedStatementWrapper.setInt(4, newAgePreferences);
         singlePreparedStatementWrapper.setInt(5, id);
 
-        return singlePreparedStatementWrapper.executeUpdate();
+        int rowsChanged = singlePreparedStatementWrapper.executeUpdate();
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return rowsChanged;
     }
 }

@@ -22,7 +22,6 @@ public class RecipeEntityExtractor {
     public RecipeEntity extractRecipeFromDatabase(
             int id
     ) throws FailedConnectingException, FailedStatementException, UnexpectedException, FailedReadException {
-        RecipeEntity recipeEntity = null;
 
         String query = "SELECT * FROM Recipe WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -31,7 +30,7 @@ public class RecipeEntityExtractor {
         singlePreparedStatementWrapper.setInt(1, id);
 
         ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
-        recipeEntity = createEntityFromResultSet(resultSet);
+        RecipeEntity recipeEntity = createEntityFromResultSet(resultSet);
 
         singlePreparedStatementWrapper.closeStatement();
 
@@ -41,8 +40,6 @@ public class RecipeEntityExtractor {
     public RecipeEntity extractRecipeFromDatabase(
             String name
     ) throws FailedConnectingException, UnexpectedException, FailedStatementException, FailedReadException {
-        RecipeEntity recipeEntity = null;
-
         String query = "SELECT * FROM Recipe WHERE name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
@@ -50,7 +47,7 @@ public class RecipeEntityExtractor {
         singlePreparedStatementWrapper.setString(1, name);
 
         ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
-        recipeEntity = createEntityFromResultSet(resultSet);
+        RecipeEntity recipeEntity = createEntityFromResultSet(resultSet);
 
         singlePreparedStatementWrapper.closeStatement();
 

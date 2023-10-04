@@ -14,7 +14,7 @@ public class RecipeDeleteWorker {
         this.connection = connection;
     }
 
-    public int deleteRecipe(
+    public int deleteRecipeById(
             int id
     ) throws UnexpectedException, FailedExecuteException, FailedConnectingException, FailedStatementException {
 
@@ -27,7 +27,7 @@ public class RecipeDeleteWorker {
         return singlePreparedStatementWrapper.executeUpdate();
     }
 
-    public int deleteRecipe(
+    public int deleteRecipeByName(
             String name
     ) throws UnexpectedException, FailedStatementException, FailedExecuteException, FailedConnectingException {
 

@@ -16,7 +16,7 @@ public class IngredientEntityExtractor {
         this.connection = connection;
     }
 
-    public IngredientEntity extractIngredientFromDatabase(
+    public IngredientEntity extractIngredientFromDatabaseById(
             int id
     ) throws UnexpectedException, FailedStatementException, FailedConnectingException, FailedReadException {
 
@@ -35,7 +35,7 @@ public class IngredientEntityExtractor {
         return ingredientEntity;
     }
 
-    public IngredientEntity extractIngredientFromDatabase(
+    public IngredientEntity extractIngredientFromDatabaseByName(
             String name
     ) throws FailedStatementException, FailedConnectingException, UnexpectedException, FailedReadException {
         String query = "SELECT * FROM Ingredients WHERE name = ?";

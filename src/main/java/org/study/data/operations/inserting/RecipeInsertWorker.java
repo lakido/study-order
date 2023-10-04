@@ -31,7 +31,11 @@ public class RecipeInsertWorker {
         singlePreparedStatementWrapper.setInt(3, popularity);
         singlePreparedStatementWrapper.setInt(4, agePreferences);
 
-        return singlePreparedStatementWrapper.executeUpdate();
+        int rowsChanged = singlePreparedStatementWrapper.executeUpdate();
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return rowsChanged;
     }
 
     private int getRecipeId(

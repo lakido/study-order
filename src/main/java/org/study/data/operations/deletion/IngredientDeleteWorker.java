@@ -8,7 +8,6 @@ import org.study.data.exceptions.UnexpectedException;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class IngredientDeleteWorker {
 
@@ -18,7 +17,7 @@ public class IngredientDeleteWorker {
         this.connection = connection;
     }
 
-    public int deleteIngredient(
+    public int deleteIngredientById(
             int id
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
 
@@ -28,10 +27,14 @@ public class IngredientDeleteWorker {
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setInt(1, id);
 
-        return singlePreparedStatementWrapper.executeUpdate();
+        int rowsChanged = singlePreparedStatementWrapper.executeUpdate();
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return rowsChanged;
     }
 
-    public int deleteIngredient(
+    public int deleteIngredientByName(
             String name
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {
 
@@ -41,6 +44,10 @@ public class IngredientDeleteWorker {
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
         singlePreparedStatementWrapper.setString(1, name);
 
-        return singlePreparedStatementWrapper.executeUpdate();
+        int rowsChange = singlePreparedStatementWrapper.executeUpdate();
+
+        singlePreparedStatementWrapper.closeStatement();
+
+        return rowsChange;
     }
 }
