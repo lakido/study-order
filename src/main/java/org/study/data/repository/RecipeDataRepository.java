@@ -1,7 +1,11 @@
 package org.study.data.repository;
 
+import org.study.data.entity.RecipeEntity;
+import org.study.data.exceptions.*;
+import org.study.data.exceptions.Error;
 import org.study.data.sources.recipe.RecipeDataSource;
 import org.study.ui.repository.RecipeRepository;
+import org.study.utils.Result;
 
 public class RecipeDataRepository implements RecipeRepository {
 
@@ -9,24 +13,79 @@ public class RecipeDataRepository implements RecipeRepository {
     //TODO other program layer should not have an ability to use classes from data layer
     //TODO this class should implement all operations that data layer can execute (insert, deletion, modifying, extracting)
 
-    //TODO WARNING i need to implement container (watch vladik's github: android useful features, container);
-    //TODO WARNING как передать функцию в другую функцию и вызвать её внутри - узнать (смотерть класс Test в org.study)
-
-    //TODO implement function, that will create the wrapper of "Result" class for every object from data sources
-
-    //TODO implement class "Result", that will store information about current transaction. instances of this class will be creating every time
-    // when accessing the database happens, this class should locate in high layer (ort.study.utils)
+    //TODO make Result class parameterized with bool. if correct result of updating db (x>0), then true
     private final RecipeDataSource recipeDataSource;
+
     public RecipeDataRepository(RecipeDataSource recipeDataSource) {
         this.recipeDataSource = recipeDataSource;
     }
+
     @Override
-    public long insertRecipe() {
-        return 0;
+    public Result<Integer> updateRecipe(RecipeEntity recipeEntity) {
+        try {
+            return new Result.Correct<>(recipeDataSource.updateRecipe(recipeEntity));
+        } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
+                 FailedConnectingException exception) {
+            return new Result.Error<>(exception);
+        } catch (Exception e) {
+            return new Result.Error<>(new Error());
+        }
     }
 
     @Override
-    public long insertIngredient() {
-        return 0;
+    public Result<Integer> deleteRecipeByName(String name) {
+        try {
+            return new Result.Correct<>(recipeDataSource.deleteRecipeByName(name));
+        } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
+                 FailedConnectingException exception) {
+            throw new RuntimeException(exception);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<Integer> deleteRecipeById(int id) {
+        try {
+            return new Result.Correct<>(recipeDataSource.deleteRecipeById(id));
+        } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
+                 FailedConnectingException exception) {
+            throw new RuntimeException(exception);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<RecipeEntity> extractRecipeEntityByName(String name) {
+        try {
+            return new Result.Correct<>(recipeDataSource.extractRecipeEntityByName(name));
+        } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
+            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<RecipeEntity> extractRecipeEntityById(int id) {
+        try {
+            return new Result.Correct<>(recipeDataSource.extractRecipeEntityById(id));
+        } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
+            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<Integer> insertRecipe(String name, String category, int popularity, int agePreferences) {
+        try {
+            return new Result.Correct<>(recipeDataSource.insertRecipe(new RecipeEntity(name, category, popularity, agePreferences)));
+        } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException e) {
+            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
     }
 }
