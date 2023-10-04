@@ -21,7 +21,7 @@ public class IngredientEntity {
         this.recommendation = recommendation;
     }
 
-    private IngredientEntity(int id, String name, int calories, int weight, String recommendation) {
+    public IngredientEntity(int id, String name, int calories, int weight, String recommendation) {
         this.id = id;
         this.name = name;
         this.calories = calories;

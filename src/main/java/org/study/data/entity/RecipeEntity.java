@@ -21,7 +21,7 @@ public class RecipeEntity {
         this.agePreferences = agePreferences;
     }
 
-    private RecipeEntity(int id, String name, String category, int popularity, int agePreferences) {
+    public RecipeEntity(int id, String name, String category, int popularity, int agePreferences) {
         this.id = id;
         this.name = name;
         this.category = category;

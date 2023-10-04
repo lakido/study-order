@@ -17,7 +17,7 @@ public class RelationIngredientRecipeEntity {
         this.idIngredient = idIngredient;
     }
 
-    private RelationIngredientRecipeEntity(int id, int idRecipe, int idIngredient) {
+    public RelationIngredientRecipeEntity(int id, int idRecipe, int idIngredient) {
         this.id = id;
         this.idRecipe = idRecipe;
         this.idIngredient = idIngredient;
