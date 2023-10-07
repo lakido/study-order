@@ -1,4 +1,4 @@
-package org.study.data.entity;
+package org.study.data.entities;
 
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.UnexpectedException;
@@ -17,7 +17,7 @@ public class RelationIngredientRecipeEntity {
         this.idIngredient = idIngredient;
     }
 
-    public RelationIngredientRecipeEntity(int id, int idRecipe, int idIngredient) {
+    private RelationIngredientRecipeEntity(int id, int idRecipe, int idIngredient) {
         this.id = id;
         this.idRecipe = idRecipe;
         this.idIngredient = idIngredient;
@@ -35,6 +35,10 @@ public class RelationIngredientRecipeEntity {
         } catch (Exception exception) {
             throw new UnexpectedException();
         }
+    }
+
+    public static RelationIngredientRecipeEntity getRelationIngredientRecipeEntity(int id, int idRecipe, int idIngredient) {
+        return new RelationIngredientRecipeEntity(id, idRecipe, idIngredient);
     }
 
     public int getId() {

@@ -1,4 +1,4 @@
-package org.study.data.entity;
+package org.study.data.entities;
 
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.UnexpectedException;
@@ -21,7 +21,7 @@ public class RecipeEntity {
         this.agePreferences = agePreferences;
     }
 
-    public RecipeEntity(int id, String name, String category, int popularity, int agePreferences) {
+    private RecipeEntity(int id, String name, String category, int popularity, int agePreferences) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -44,6 +44,14 @@ public class RecipeEntity {
         } catch (Exception e) {
             throw new UnexpectedException();
         }
+    }
+
+    public static RecipeEntity getRecipeEntity(int id,
+                                               String name,
+                                               String category,
+                                               int popularity,
+                                               int agePreferences) {
+        return new RecipeEntity(id, name, category, popularity, agePreferences);
     }
 
     @Override

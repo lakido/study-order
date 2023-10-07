@@ -1,7 +1,8 @@
-package org.study.data.entity;
+package org.study.data.entities;
 
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.UnexpectedException;
+import org.study.domain.entities.IngredientModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ public class IngredientEntity {
         this.recommendation = recommendation;
     }
 
-    public IngredientEntity(int id, String name, int calories, int weight, String recommendation) {
+    private IngredientEntity(int id, String name, int calories, int weight, String recommendation) {
         this.id = id;
         this.name = name;
         this.calories = calories;
@@ -44,6 +45,25 @@ public class IngredientEntity {
         } catch (Exception e) {
             throw new UnexpectedException();
         }
+    }
+
+    public static IngredientEntity getIngredientEntity(
+            int id,
+            String name,
+            int calories,
+            int weight,
+            String recommendation){
+        return new IngredientEntity(id, name, calories, weight, recommendation);
+    }
+
+    public static IngredientModel mapIngredientEntityToModel(IngredientEntity ingredientEntity) {
+        return new IngredientModel(
+                ingredientEntity.getId(),
+                ingredientEntity.getName(),
+                ingredientEntity.calories,
+                ingredientEntity.getWeight(),
+                ingredientEntity.getRecommendation()
+        );
     }
 
     @Override
