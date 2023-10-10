@@ -1,6 +1,6 @@
-package org.study.ui.repository;
+package org.study.domain.repository;
 
-import org.study.data.entity.RecipeEntity;
+import org.study.data.entities.RecipeEntity;
 import org.study.utils.Result;
 
 public interface RecipeRepository {

@@ -1,6 +1,7 @@
-package org.study.ui.repository;
+package org.study.domain.repository;
 
-import org.study.data.entity.IngredientEntity;
+import org.study.data.entities.IngredientEntity;
+import org.study.domain.entities.IngredientModel;
 import org.study.utils.Result;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface IngredientRepository {
 
     Result<IngredientEntity> extractIngredientEntityById(int id);
 
-    Result<IngredientEntity> extractIngredientEntityByName(String name);
+    Result<IngredientModel> extractIngredientEntityByName(String name);
 
     Result<Integer> insertIngredient(String name, int calories, int weight, String recommendation);
 

@@ -1,7 +1,7 @@
 package org.study.data.operations.extraction;
 
 import org.study.data.connection.ConnectionWrapper;
-import org.study.data.entity.RelationIngredientRecipeEntity;
+import org.study.data.entities.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 
@@ -12,10 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RelationRecordExtractor {
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static RelationRecordExtractor relationRecordExtractorSingleton;
 
-    public RelationRecordExtractor(ConnectionWrapper connection) {
-        this.connection = connection;
+    public RelationRecordExtractor() {}
+
+    public static RelationRecordExtractor getInstance(ConnectionWrapper connectionWrapper) {
+        if (relationRecordExtractorSingleton == null) {
+            relationRecordExtractorSingleton = new RelationRecordExtractor();
+            connection = connectionWrapper;
+        }
+
+        return relationRecordExtractorSingleton;
     }
 
     public RelationIngredientRecipeEntity extractRelationByIngredientIdAndRecipeId(
@@ -98,7 +106,7 @@ public class RelationRecordExtractor {
     }
 
     private RelationIngredientRecipeEntity extractRelationIngredientRecipeEntity(ResultSet resultSet) throws UnexpectedException {
-        RelationIngredientRecipeEntity relationIngredientRecipeEntity = null;
+        RelationIngredientRecipeEntity relationIngredientRecipeEntity;
 
         try {
             relationIngredientRecipeEntity = RelationIngredientRecipeEntity.getRelationIngredientRecipeEntity(resultSet);

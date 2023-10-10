@@ -1,6 +1,6 @@
 package org.study.data.sources.recipe;
 
-import org.study.data.entity.RecipeEntity;
+import org.study.data.entities.RecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.changing.RecipeUpdateWorker;
 import org.study.data.operations.deletion.RecipeDeleteWorker;
@@ -14,7 +14,9 @@ public class RecipeDataSource implements RecipeDataSourceInterface {
     private final RecipeEntityExtractor recipeEntityExtractor;
     private final RecipeInsertWorker recipeInsertWorker;
 
-    public RecipeDataSource(
+    private static RecipeDataSource recipeDataSourceSingleton;
+
+    private RecipeDataSource(
             RecipeUpdateWorker recipeUpdateWorker,
             RecipeDeleteWorker recipeDeleteWorker,
             RecipeEntityExtractor recipeEntityExtractor,
@@ -24,6 +26,24 @@ public class RecipeDataSource implements RecipeDataSourceInterface {
         this.recipeDeleteWorker = recipeDeleteWorker;
         this.recipeEntityExtractor = recipeEntityExtractor;
         this.recipeInsertWorker = recipeInsertWorker;
+    }
+
+    public static RecipeDataSource getInstance(
+            RecipeUpdateWorker recipeUpdateWorker,
+            RecipeDeleteWorker recipeDeleteWorker,
+            RecipeEntityExtractor recipeEntityExtractor,
+            RecipeInsertWorker recipeInsertWorker
+    ) {
+        if (recipeDataSourceSingleton == null) {
+            recipeDataSourceSingleton = new RecipeDataSource(
+                    recipeUpdateWorker,
+                    recipeDeleteWorker,
+                    recipeEntityExtractor,
+                    recipeInsertWorker
+            );
+        }
+
+        return recipeDataSourceSingleton;
     }
 
     @Override

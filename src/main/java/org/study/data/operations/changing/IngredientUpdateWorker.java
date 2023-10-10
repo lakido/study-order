@@ -10,10 +10,19 @@ import org.study.data.operations.SinglePreparedStatementWrapper;
 import java.sql.PreparedStatement;
 
 public class IngredientUpdateWorker {
-    private final ConnectionWrapper connectionWrapper;
 
-    public IngredientUpdateWorker(ConnectionWrapper connectionWrapper) {
-        this.connectionWrapper = connectionWrapper;
+    private static IngredientUpdateWorker singletoneIngredientUpdateWorker;
+    private static ConnectionWrapper connection;
+
+    private IngredientUpdateWorker() {}
+
+    public static IngredientUpdateWorker getInstance (ConnectionWrapper connectionWrapperArg) {
+        if (singletoneIngredientUpdateWorker == null) {
+            singletoneIngredientUpdateWorker = new IngredientUpdateWorker();
+            connection = connectionWrapperArg;
+        }
+
+        return singletoneIngredientUpdateWorker;
     }
 
     public int updateIngredient(
@@ -26,7 +35,7 @@ public class IngredientUpdateWorker {
 
         String query = "UPDATE Ingredients SET name = ?, recommendation = ?, calories = ?, weight = ? WHERE id = ?";
 
-        PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 
         singlePreparedStatementWrapper.setString(1, newName);

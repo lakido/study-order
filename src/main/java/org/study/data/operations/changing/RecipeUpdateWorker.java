@@ -10,10 +10,17 @@ import org.study.data.operations.SinglePreparedStatementWrapper;
 import java.sql.PreparedStatement;
 
 public class RecipeUpdateWorker {
-    private final ConnectionWrapper connectionWrapper;
+    private static ConnectionWrapper connection;
+    private static RecipeUpdateWorker recipeUpdateWorkerSingleton;
 
-    public RecipeUpdateWorker(ConnectionWrapper connectionWrapper) {
-        this.connectionWrapper = connectionWrapper;
+    private RecipeUpdateWorker() {}
+    public static RecipeUpdateWorker getInstance(ConnectionWrapper connectionWrapperArg) {
+        if (recipeUpdateWorkerSingleton == null) {
+            recipeUpdateWorkerSingleton = new RecipeUpdateWorker();
+            connection = connectionWrapperArg;
+        }
+
+        return recipeUpdateWorkerSingleton;
     }
 
     public int updateRecipe(
@@ -25,7 +32,7 @@ public class RecipeUpdateWorker {
     ) throws FailedStatementException, FailedConnectingException, UnexpectedException, FailedExecuteException {
 
         String query = "UPDATE Recipe SET name = ?, category = ?, popularity = ?, age_preferences = ? WHERE id = ?";
-        PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
 

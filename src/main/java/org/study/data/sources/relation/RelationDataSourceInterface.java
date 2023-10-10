@@ -1,6 +1,6 @@
 package org.study.data.sources.relation;
 
-import org.study.data.entity.RelationIngredientRecipeEntity;
+import org.study.data.entities.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.*;
 
 import java.util.List;

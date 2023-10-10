@@ -1,6 +1,6 @@
 package org.study.data.sources.relation;
 
-import org.study.data.entity.RelationIngredientRecipeEntity;
+import org.study.data.entities.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.extraction.RelationRecordExtractor;
 import org.study.data.operations.inserting.RelationRecordInsertWorker;
@@ -12,9 +12,25 @@ public class RelationDataSource implements RelationDataSourceInterface {
     private final RelationRecordInsertWorker relationRecordInsertWorker;
     private final RelationRecordExtractor relationRecordExtractor;
 
-    public RelationDataSource(RelationRecordInsertWorker relationRecordInsertWorker, RelationRecordExtractor relationRecordExtractor) {
+    private static RelationDataSource relationDataSourceSingleton;
+
+    private RelationDataSource(
+            RelationRecordInsertWorker relationRecordInsertWorker,
+            RelationRecordExtractor relationRecordExtractor
+    ) {
         this.relationRecordInsertWorker = relationRecordInsertWorker;
         this.relationRecordExtractor = relationRecordExtractor;
+    }
+
+    public static RelationDataSource getInstance(
+            RelationRecordInsertWorker relationRecordInsertWorker,
+            RelationRecordExtractor relationRecordExtractor
+    ) {
+        if (relationDataSourceSingleton == null) {
+            relationDataSourceSingleton = new RelationDataSource(relationRecordInsertWorker, relationRecordExtractor);
+        }
+
+        return relationDataSourceSingleton;
     }
 
     @Override

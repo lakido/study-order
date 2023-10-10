@@ -1,8 +1,5 @@
 package org.study.data.operations;
 
-import org.study.data.entity.IngredientEntity;
-import org.study.data.entity.RecipeEntity;
-import org.study.data.entity.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.FailedExecuteException;
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.FailedStatementException;

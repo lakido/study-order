@@ -8,10 +8,18 @@ import org.study.data.operations.extraction.RecipeEntityExtractor;
 import java.sql.PreparedStatement;
 
 public class RecipeInsertWorker {
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static RecipeInsertWorker recipeInsertWorkerSingleton;
 
-    public RecipeInsertWorker(ConnectionWrapper connection) {
-        this.connection = connection;
+    private RecipeInsertWorker() {}
+
+    public static RecipeInsertWorker getInstance(ConnectionWrapper connectionWrapper) {
+        if (recipeInsertWorkerSingleton == null) {
+            recipeInsertWorkerSingleton = new RecipeInsertWorker();
+            connection = connectionWrapper;
+        }
+
+        return recipeInsertWorkerSingleton;
     }
 
     public int insertRecipe(
@@ -42,7 +50,7 @@ public class RecipeInsertWorker {
             String name
     ) throws UnexpectedException, FailedStatementException, FailedConnectingException, FailedReadException {
 
-        RecipeEntityExtractor recipeEntityExtractor = new RecipeEntityExtractor(connection);
+        RecipeEntityExtractor recipeEntityExtractor = RecipeEntityExtractor.getInstance(connection);
 
         return recipeEntityExtractor.extractRecipeFromDatabase(name).getId();
     }

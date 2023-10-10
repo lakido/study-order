@@ -1,7 +1,7 @@
 package org.study.data.operations.extraction;
 
 import org.study.data.connection.ConnectionWrapper;
-import org.study.data.entity.RecipeEntity;
+import org.study.data.entities.RecipeEntity;
 import org.study.data.exceptions.FailedConnectingException;
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.FailedStatementException;
@@ -13,10 +13,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RecipeEntityExtractor {
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static RecipeEntityExtractor recipeEntityExtractorSingleton;
 
-    public RecipeEntityExtractor(ConnectionWrapper connection) {
-        this.connection = connection;
+    private RecipeEntityExtractor() {}
+
+    public static RecipeEntityExtractor getInstance(ConnectionWrapper connectionWrapper) {
+        if (recipeEntityExtractorSingleton == null) {
+            recipeEntityExtractorSingleton = new RecipeEntityExtractor();
+            connection = connectionWrapper;
+        }
+
+        return recipeEntityExtractorSingleton;
     }
 
     public RecipeEntity extractRecipeFromDatabase(
@@ -55,7 +63,7 @@ public class RecipeEntityExtractor {
     }
 
     private RecipeEntity createEntityFromResultSet(ResultSet resultSet) throws UnexpectedException {
-        RecipeEntity recipeEntity = null;
+        RecipeEntity recipeEntity;
 
         try {
             recipeEntity = RecipeEntity.getRecipeEntity(resultSet);

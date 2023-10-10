@@ -1,6 +1,6 @@
-package org.study.ui.repository;
+package org.study.domain.repository;
 
-import org.study.data.entity.RelationIngredientRecipeEntity;
+import org.study.data.entities.RelationIngredientRecipeEntity;
 import org.study.utils.Result;
 
 import java.util.List;

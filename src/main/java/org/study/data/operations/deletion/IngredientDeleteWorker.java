@@ -11,10 +11,18 @@ import java.sql.PreparedStatement;
 
 public class IngredientDeleteWorker {
 
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static IngredientDeleteWorker ingredientDeleteWorkerSingleton;
 
-    public IngredientDeleteWorker(ConnectionWrapper connection) {
-        this.connection = connection;
+    private IngredientDeleteWorker() {}
+
+    public static IngredientDeleteWorker getInstance(ConnectionWrapper connectionWrapper) {
+        if (ingredientDeleteWorkerSingleton == null) {
+            ingredientDeleteWorkerSingleton = new IngredientDeleteWorker();
+            connection = connectionWrapper;
+        }
+
+        return ingredientDeleteWorkerSingleton;
     }
 
     public int deleteIngredientById(

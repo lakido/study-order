@@ -1,6 +1,6 @@
 package org.study.data.sources.ingredient;
 
-import org.study.data.entity.IngredientEntity;
+import org.study.data.entities.IngredientEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.changing.IngredientUpdateWorker;
 import org.study.data.operations.deletion.IngredientDeleteWorker;
@@ -16,8 +16,9 @@ public class IngredientDataSource implements IngredientDataSourceInterface{
     private final IngredientEntityExtractor ingredientEntityExtractor;
     private final IngredientInsertWorker ingredientInsertWorker;
 
+    private static IngredientDataSource ingredientDataSourceSingleton;
 
-    public IngredientDataSource(
+    private IngredientDataSource(
             IngredientUpdateWorker ingredientUpdateWorker,
             IngredientDeleteWorker ingredientDeleteWorker,
             IngredientEntityExtractor ingredientEntityExtractor,
@@ -28,6 +29,24 @@ public class IngredientDataSource implements IngredientDataSourceInterface{
         this.ingredientEntityExtractor = ingredientEntityExtractor;
         this.ingredientInsertWorker = ingredientInsertWorker;
     }
+
+    public static IngredientDataSource getInstance(
+            IngredientUpdateWorker ingredientUpdateWorker,
+            IngredientDeleteWorker ingredientDeleteWorker,
+            IngredientEntityExtractor ingredientEntityExtractor,
+            IngredientInsertWorker ingredientInsertWorker
+    ) {
+        if (ingredientDataSourceSingleton == null) {
+            ingredientDataSourceSingleton = new IngredientDataSource(
+                    ingredientUpdateWorker,
+                    ingredientDeleteWorker,
+                    ingredientEntityExtractor,
+                    ingredientInsertWorker);
+        }
+
+        return ingredientDataSourceSingleton;
+    }
+
     @Override
     public int updateIngredient(
             IngredientEntity ingredientEntity
@@ -86,7 +105,5 @@ public class IngredientDataSource implements IngredientDataSourceInterface{
                 ingredientEntity.getWeight(),
                 ingredientEntity.getRecommendation()
         );
-
-
     }
 }

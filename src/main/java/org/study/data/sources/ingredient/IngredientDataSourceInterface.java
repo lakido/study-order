@@ -1,6 +1,6 @@
 package org.study.data.sources.ingredient;
 
-import org.study.data.entity.IngredientEntity;
+import org.study.data.entities.IngredientEntity;
 import org.study.data.exceptions.*;
 
 import java.util.List;

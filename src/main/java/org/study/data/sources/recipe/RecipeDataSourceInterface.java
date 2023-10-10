@@ -1,6 +1,6 @@
 package org.study.data.sources.recipe;
 
-import org.study.data.entity.RecipeEntity;
+import org.study.data.entities.RecipeEntity;
 import org.study.data.exceptions.*;
 
 public interface RecipeDataSourceInterface {

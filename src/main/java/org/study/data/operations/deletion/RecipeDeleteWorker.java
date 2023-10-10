@@ -8,10 +8,18 @@ import java.sql.PreparedStatement;
 
 public class RecipeDeleteWorker {
 
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static RecipeDeleteWorker recipeDeleteWorkerSingleton;
 
-    public RecipeDeleteWorker(ConnectionWrapper connection) {
-        this.connection = connection;
+    private RecipeDeleteWorker() {}
+
+    public static RecipeDeleteWorker getInstance(ConnectionWrapper connectionWrapper) {
+        if (recipeDeleteWorkerSingleton == null) {
+            recipeDeleteWorkerSingleton = new RecipeDeleteWorker();
+            connection = connectionWrapper;
+        }
+
+        return recipeDeleteWorkerSingleton;
     }
 
     public int deleteRecipeById(

@@ -1,7 +1,7 @@
 package org.study.data.operations.inserting;
 
 import org.study.data.connection.ConnectionWrapper;
-import org.study.data.entity.RelationIngredientRecipeEntity;
+import org.study.data.entities.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 
@@ -13,10 +13,18 @@ import java.util.List;
 
 public class RelationRecordInsertWorker {
 
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static RelationRecordInsertWorker relationRecordInsertWorkerSingleton;
 
-    public RelationRecordInsertWorker(ConnectionWrapper connection) {
-        this.connection = connection;
+    private RelationRecordInsertWorker() {}
+
+    public static RelationRecordInsertWorker getInstance(ConnectionWrapper connectionWrapper) {
+        if (relationRecordInsertWorkerSingleton == null) {
+            relationRecordInsertWorkerSingleton = new RelationRecordInsertWorker();
+            connection = connectionWrapper;
+        }
+
+        return relationRecordInsertWorkerSingleton;
     }
 
     public int insertRelationRecipeIngredientRecord(
@@ -58,7 +66,7 @@ public class RelationRecordInsertWorker {
 
         try {
             if (resultSet.next()) {
-                ingredientRecipeEntityList.add(new RelationIngredientRecipeEntity(
+                ingredientRecipeEntityList.add(RelationIngredientRecipeEntity.getRelationIngredientRecipeEntity(
                         resultSet.getInt("id"),
                         resultSet.getInt("id_recipe"),
                         resultSet.getInt("id_ingredients"))

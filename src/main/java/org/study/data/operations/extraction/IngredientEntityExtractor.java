@@ -1,7 +1,7 @@
 package org.study.data.operations.extraction;
 
 import org.study.data.connection.ConnectionWrapper;
-import org.study.data.entity.IngredientEntity;
+import org.study.data.entities.IngredientEntity;
 import org.study.data.exceptions.*;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 
@@ -10,10 +10,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class IngredientEntityExtractor {
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static IngredientEntityExtractor ingredientEntityExtractorSingleton;
 
-    public IngredientEntityExtractor(ConnectionWrapper connection) {
-        this.connection = connection;
+    private IngredientEntityExtractor() {}
+
+    public static IngredientEntityExtractor getInstance(ConnectionWrapper connectionWrapper) {
+        if (ingredientEntityExtractorSingleton == null) {
+            ingredientEntityExtractorSingleton = new IngredientEntityExtractor();
+            connection = connectionWrapper;
+        }
+
+        return ingredientEntityExtractorSingleton;
     }
 
     public IngredientEntity extractIngredientFromDatabaseById(
@@ -54,7 +62,7 @@ public class IngredientEntityExtractor {
     }
 
     private IngredientEntity createIngredientEntity(ResultSet resultSet) throws UnexpectedException {
-        IngredientEntity ingredientEntity = null;
+        IngredientEntity ingredientEntity;
 
         try {
             ingredientEntity = IngredientEntity.getIngredientEntity(resultSet);

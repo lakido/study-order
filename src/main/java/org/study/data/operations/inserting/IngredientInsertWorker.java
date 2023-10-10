@@ -1,7 +1,7 @@
 package org.study.data.operations.inserting;
 
 import org.study.data.connection.ConnectionWrapper;
-import org.study.data.entity.IngredientEntity;
+import org.study.data.entities.IngredientEntity;
 import org.study.data.exceptions.FailedConnectingException;
 import org.study.data.exceptions.FailedExecuteException;
 import org.study.data.exceptions.FailedStatementException;
@@ -12,10 +12,18 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 public class IngredientInsertWorker {
-    private final ConnectionWrapper connection;
+    private static ConnectionWrapper connection;
+    private static IngredientInsertWorker ingredientInsertWorkerSingleton;
 
-    public IngredientInsertWorker(ConnectionWrapper connection) {
-        this.connection = connection;
+    private IngredientInsertWorker() {}
+
+    public static IngredientInsertWorker getInstance(ConnectionWrapper connectionWrapper) {
+        if (ingredientInsertWorkerSingleton == null) {
+            ingredientInsertWorkerSingleton = new IngredientInsertWorker();
+            connection = connectionWrapper;
+        }
+
+        return ingredientInsertWorkerSingleton;
     }
 
     public int insertIngredient(
