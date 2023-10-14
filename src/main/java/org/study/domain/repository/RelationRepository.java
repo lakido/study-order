@@ -1,16 +1,16 @@
 package org.study.domain.repository;
 
-import org.study.data.entities.RelationIngredientRecipeEntity;
+import org.study.domain.entities.RelationIngredientRecipeModel;
 import org.study.utils.Result;
 
 import java.util.List;
 
 public interface RelationRepository {
-    Result<RelationIngredientRecipeEntity> extractRelationByIngredientIdAndRecipeId (int recipeId, int ingredientId);
+    Result<RelationIngredientRecipeModel> extractRelationByIngredientIdAndRecipeId(int recipeId, int ingredientId);
 
-    Result<List<RelationIngredientRecipeEntity>> extractRelationToListByRecipe (int recipeId);
+    Result<List<RelationIngredientRecipeModel>> extractRelationToListByRecipe(int recipeId);
 
-    Result<List<RelationIngredientRecipeEntity>> extractRelationToListByIngredient (int ingredientId);
+    Result<List<RelationIngredientRecipeModel>> extractRelationToListByIngredient(int ingredientId);
 
     Result<Integer> insertRelation(int recipeId, int ingredientId);
 }

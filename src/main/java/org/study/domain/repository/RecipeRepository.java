@@ -1,19 +1,19 @@
 package org.study.domain.repository;
 
-import org.study.data.entities.RecipeEntity;
+import org.study.domain.entities.RecipeModel;
 import org.study.utils.Result;
 
 public interface RecipeRepository {
 
-    Result<Integer> updateRecipe(RecipeEntity recipeEntity);
+    Result<Integer> updateRecipe(RecipeModel recipeModel);
 
     Result<Integer> deleteRecipeByName(String name);
 
     Result<Integer> deleteRecipeById(int id);
 
-    Result<RecipeEntity> extractRecipeEntityByName(String name);
+    Result<RecipeModel> extractRecipeEntityByName(String name);
 
-    Result<RecipeEntity> extractRecipeEntityById(int id);
+    Result<RecipeModel> extractRecipeEntityById(int id);
 
     Result<Integer> insertRecipe(String name, String category, int popularity, int agePreferences);
 }

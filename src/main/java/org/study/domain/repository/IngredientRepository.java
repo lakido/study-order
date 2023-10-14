@@ -1,6 +1,5 @@
 package org.study.domain.repository;
 
-import org.study.data.entities.IngredientEntity;
 import org.study.domain.entities.IngredientModel;
 import org.study.utils.Result;
 
@@ -14,11 +13,11 @@ public interface IngredientRepository {
 
     Result<Integer> deleteIngredientByName(String name);
 
-    Result<IngredientEntity> extractIngredientEntityById(int id);
+    Result<IngredientModel> extractIngredientModelById(int id);
 
-    Result<IngredientModel> extractIngredientEntityByName(String name);
+    Result<IngredientModel> extractIngredientModelByName(String name);
 
     Result<Integer> insertIngredient(String name, int calories, int weight, String recommendation);
 
-    Result<Integer> insertListOfIngredients(List<IngredientEntity> ingredientEntityList);
+    Result<Integer> insertListOfIngredients(List<IngredientModel> ingredientModels);
 }
