@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IngredientRepository {
 
-    Result<Integer> updateIngredient(int id, String newName, String newRecommendation, int newCalories, int newWeight);
+    Result<Integer> updateIngredient(IngredientModel ingredientModel);
 
     Result<Integer> deleteIngredientById(int id);
 
@@ -17,7 +17,7 @@ public interface IngredientRepository {
 
     Result<IngredientModel> extractIngredientModelByName(String name);
 
-    Result<Integer> insertIngredient(String name, int calories, int weight, String recommendation);
+    Result<Integer> insertIngredient(IngredientModel ingredientModel);
 
     Result<Integer> insertListOfIngredients(List<IngredientModel> ingredientModels);
 }

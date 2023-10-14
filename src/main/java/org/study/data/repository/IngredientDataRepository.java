@@ -29,9 +29,15 @@ public class IngredientDataRepository implements IngredientRepository {
     }
 
     @Override
-    public Result<Integer> updateIngredient(int id, String newName, String newRecommendation, int newCalories, int newWeight) {
+    public Result<Integer> updateIngredient(IngredientModel ingredientModel) {
         try {
-            return new Result.Correct<>(dataSource.updateIngredient(IngredientEntity.getIngredientEntity(id, newName, newCalories, newWeight, newRecommendation)));
+            return new Result.Correct<>(dataSource.updateIngredient(IngredientEntity.getIngredientEntity(
+                    ingredientModel.id(),
+                    ingredientModel.name(),
+                    ingredientModel.calories(),
+                    ingredientModel.weight(),
+                    ingredientModel.recommendation()))
+            );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
                  FailedConnectingException e) {
             return new Result.Error<>(e);
@@ -87,9 +93,14 @@ public class IngredientDataRepository implements IngredientRepository {
     }
 
     @Override
-    public Result<Integer> insertIngredient(String name, int calories, int weight, String recommendation) {
+    public Result<Integer> insertIngredient(IngredientModel ingredientModel) {
         try {
-            return new Result.Correct<>(dataSource.insertIngredient(new IngredientEntity(name, calories, weight, recommendation)));
+            return new Result.Correct<>(dataSource.insertIngredient(new IngredientEntity(
+                    ingredientModel.name(),
+                    ingredientModel.calories(),
+                    ingredientModel.weight(),
+                    ingredientModel.recommendation()))
+            );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
                  FailedConnectingException e) {
             return new Result.Error<>(e);
