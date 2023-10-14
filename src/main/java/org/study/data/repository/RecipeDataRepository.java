@@ -67,7 +67,7 @@ public class RecipeDataRepository implements RecipeRepository {
     }
 
     @Override
-    public Result<RecipeModel> extractRecipeEntityByName(String name) {
+    public Result<RecipeModel> extractRecipeModelByName(String name) {
         try {
             return new Result.Correct<>(dataSource.extractRecipeEntityByName(name)).map(RecipeEntity::mapEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException exception) {
@@ -78,7 +78,7 @@ public class RecipeDataRepository implements RecipeRepository {
     }
 
     @Override
-    public Result<RecipeModel> extractRecipeEntityById(int id) {
+    public Result<RecipeModel> extractRecipeModelById(int id) {
         try {
             return new Result.Correct<>(dataSource.extractRecipeEntityById(id)).map(RecipeEntity::mapEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException exception) {
