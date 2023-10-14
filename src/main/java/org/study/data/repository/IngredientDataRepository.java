@@ -9,6 +9,7 @@ import org.study.domain.repository.IngredientRepository;
 import org.study.utils.Result;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class IngredientDataRepository implements IngredientRepository {
 
@@ -64,9 +65,9 @@ public class IngredientDataRepository implements IngredientRepository {
     }
 
     @Override
-    public Result<IngredientEntity> extractIngredientEntityById(int id) {
+    public Result<IngredientModel> extractIngredientModelById(int id) {
         try {
-            return new Result.Correct<>(dataSource.extractRecipeEntityById(id));
+            return new Result.Correct<>(dataSource.extractRecipeEntityById(id)).map(IngredientEntity::mapIngredientEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
             return new Result.Error<>(e);
         } catch (Exception exception) {
@@ -75,7 +76,7 @@ public class IngredientDataRepository implements IngredientRepository {
     }
 
     @Override
-    public Result<IngredientModel> extractIngredientEntityByName(String name) {
+    public Result<IngredientModel> extractIngredientModelByName(String name) {
         try {
             return new Result.Correct<>(dataSource.extractRecipeEntityByName(name)).map(IngredientEntity::mapIngredientEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
@@ -98,9 +99,12 @@ public class IngredientDataRepository implements IngredientRepository {
     }
 
     @Override
-    public Result<Integer> insertListOfIngredients(List<IngredientEntity> ingredientEntityList) {
+    public Result<Integer> insertListOfIngredients(List<IngredientModel> ingredientModels) {
         try {
-            return new Result.Correct<>(dataSource.insertListOfIngredients(ingredientEntityList));
+            return new Result.Correct<>(dataSource.insertListOfIngredients(ingredientModels.stream()
+                    .map(IngredientModel::mapIngredientEntityToMode)
+                    .collect(Collectors.toList())
+            ));
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
                  FailedConnectingException e) {
             return new Result.Error<>(e);

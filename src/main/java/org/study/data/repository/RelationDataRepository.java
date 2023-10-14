@@ -4,10 +4,12 @@ import org.study.data.entities.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.exceptions.Error;
 import org.study.data.sources.relation.RelationDataSource;
+import org.study.domain.entities.RelationIngredientRecipeModel;
 import org.study.domain.repository.RelationRepository;
 import org.study.utils.Result;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RelationDataRepository implements RelationRepository {
 
@@ -27,9 +29,9 @@ public class RelationDataRepository implements RelationRepository {
     }
 
     @Override
-    public Result<RelationIngredientRecipeEntity> extractRelationByIngredientIdAndRecipeId(int recipeId, int ingredientId) {
+    public Result<RelationIngredientRecipeModel> extractRelationByIngredientIdAndRecipeId(int recipeId, int ingredientId) {
         try {
-            return new Result.Correct<>(dataSource.extractRelationByRecipeIdAndIngredientId(recipeId, ingredientId));
+            return new Result.Correct<>(dataSource.extractRelationByRecipeIdAndIngredientId(recipeId, ingredientId)).map(RelationIngredientRecipeEntity::mapEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);
         } catch (Exception exception) {
@@ -38,9 +40,12 @@ public class RelationDataRepository implements RelationRepository {
     }
 
     @Override
-    public Result<List<RelationIngredientRecipeEntity>> extractRelationToListByRecipe(int recipeId) {
+    public Result<List<RelationIngredientRecipeModel>> extractRelationToListByRecipe(int recipeId) {
         try {
-            return new Result.Correct<>(dataSource.extractListOfRelationIngredientEntitiesByRecipeId(recipeId));
+            return new Result.Correct<>(dataSource.extractListOfRelationIngredientEntitiesByRecipeId(recipeId).stream()
+                    .map(RelationIngredientRecipeEntity::mapEntityToModel)
+                    .collect(Collectors.toList())
+            );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);
         } catch (Exception exception) {
@@ -49,9 +54,12 @@ public class RelationDataRepository implements RelationRepository {
     }
 
     @Override
-    public Result<List<RelationIngredientRecipeEntity>> extractRelationToListByIngredient(int ingredientId) {
+    public Result<List<RelationIngredientRecipeModel>> extractRelationToListByIngredient(int ingredientId) {
         try {
-            return new Result.Correct<>(dataSource.extractListOfRelationIngredientEntitiesByIngredientId(ingredientId));
+            return new Result.Correct<>(dataSource.extractListOfRelationIngredientEntitiesByIngredientId(ingredientId).stream()
+                    .map(RelationIngredientRecipeEntity::mapEntityToModel)
+                    .collect(Collectors.toList())
+            );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);
         } catch (Exception exception) {

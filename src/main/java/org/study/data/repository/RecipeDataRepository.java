@@ -4,6 +4,7 @@ import org.study.data.entities.RecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.exceptions.Error;
 import org.study.data.sources.recipe.RecipeDataSource;
+import org.study.domain.entities.RecipeModel;
 import org.study.domain.repository.RecipeRepository;
 import org.study.utils.Result;
 
@@ -30,9 +31,9 @@ public class RecipeDataRepository implements RecipeRepository {
     }
 
     @Override
-    public Result<Integer> updateRecipe(RecipeEntity recipeEntity) {
+    public Result<Integer> updateRecipe(RecipeModel recipeModel) {
         try {
-            return new Result.Correct<>(dataSource.updateRecipe(recipeEntity));
+            return new Result.Correct<>(dataSource.updateRecipe(RecipeModel.mapRecipeModelToEntity(recipeModel)));
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
                  FailedConnectingException exception) {
             return new Result.Error<>(exception);
@@ -66,9 +67,9 @@ public class RecipeDataRepository implements RecipeRepository {
     }
 
     @Override
-    public Result<RecipeEntity> extractRecipeEntityByName(String name) {
+    public Result<RecipeModel> extractRecipeEntityByName(String name) {
         try {
-            return new Result.Correct<>(dataSource.extractRecipeEntityByName(name));
+            return new Result.Correct<>(dataSource.extractRecipeEntityByName(name)).map(RecipeEntity::mapEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);
         } catch (Exception exception) {
@@ -77,9 +78,9 @@ public class RecipeDataRepository implements RecipeRepository {
     }
 
     @Override
-    public Result<RecipeEntity> extractRecipeEntityById(int id) {
+    public Result<RecipeModel> extractRecipeEntityById(int id) {
         try {
-            return new Result.Correct<>(dataSource.extractRecipeEntityById(id));
+            return new Result.Correct<>(dataSource.extractRecipeEntityById(id)).map(RecipeEntity::mapEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);
         } catch (Exception exception) {
