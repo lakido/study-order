@@ -11,9 +11,9 @@ public interface RecipeRepository {
 
     Result<Integer> deleteRecipeById(int id);
 
-    Result<RecipeModel> extractRecipeEntityByName(String name);
+    Result<RecipeModel> extractRecipeModelByName(String name);
 
-    Result<RecipeModel> extractRecipeEntityById(int id);
+    Result<RecipeModel> extractRecipeModelById(int id);
 
     Result<Integer> insertRecipe(RecipeModel recipeModel);
 }
