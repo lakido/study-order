@@ -66,6 +66,8 @@ public class IngredientEntity {
         );
     }
 
+
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof IngredientEntity tempEntity)) return false;

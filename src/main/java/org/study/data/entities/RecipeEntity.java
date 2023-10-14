@@ -2,6 +2,7 @@ package org.study.data.entities;
 
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.UnexpectedException;
+import org.study.domain.entities.RecipeModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,6 +53,16 @@ public class RecipeEntity {
                                                int popularity,
                                                int agePreferences) {
         return new RecipeEntity(id, name, category, popularity, agePreferences);
+    }
+
+    public static RecipeModel mapEntityToModel(RecipeEntity recipeEntity) {
+        return new RecipeModel(
+                recipeEntity.getId(),
+                recipeEntity.getName(),
+                recipeEntity.getCategory(),
+                recipeEntity.getPopularity(),
+                recipeEntity.getAgePreferences()
+        );
     }
 
     @Override

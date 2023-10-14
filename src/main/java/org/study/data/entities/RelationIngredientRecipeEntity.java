@@ -2,6 +2,7 @@ package org.study.data.entities;
 
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.UnexpectedException;
+import org.study.domain.entities.RelationIngredientRecipeModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,6 +40,14 @@ public class RelationIngredientRecipeEntity {
 
     public static RelationIngredientRecipeEntity getRelationIngredientRecipeEntity(int id, int idRecipe, int idIngredient) {
         return new RelationIngredientRecipeEntity(id, idRecipe, idIngredient);
+    }
+
+    public static RelationIngredientRecipeModel mapEntityToModel(RelationIngredientRecipeEntity relationIngredientRecipeEntity) {
+        return new RelationIngredientRecipeModel(
+                relationIngredientRecipeEntity.getId(),
+                relationIngredientRecipeEntity.getIdRecipe(),
+                relationIngredientRecipeEntity.getIdIngredient()
+        );
     }
 
     public int getId() {
