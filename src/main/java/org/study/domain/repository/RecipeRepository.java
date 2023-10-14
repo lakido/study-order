@@ -15,5 +15,5 @@ public interface RecipeRepository {
 
     Result<RecipeModel> extractRecipeEntityById(int id);
 
-    Result<Integer> insertRecipe(String name, String category, int popularity, int agePreferences);
+    Result<Integer> insertRecipe(RecipeModel recipeModel);
 }

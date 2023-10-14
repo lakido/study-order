@@ -89,9 +89,14 @@ public class RecipeDataRepository implements RecipeRepository {
     }
 
     @Override
-    public Result<Integer> insertRecipe(String name, String category, int popularity, int agePreferences) {
+    public Result<Integer> insertRecipe(RecipeModel recipeModel) {
         try {
-            return new Result.Correct<>(dataSource.insertRecipe(new RecipeEntity(name, category, popularity, agePreferences)));
+            return new Result.Correct<>(dataSource.insertRecipe(new RecipeEntity(
+                    recipeModel.name(),
+                    recipeModel.category(),
+                    recipeModel.popularity(),
+                    recipeModel.agePreferences()))
+            );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);
         } catch (Exception exception) {
