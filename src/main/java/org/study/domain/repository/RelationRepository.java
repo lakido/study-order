@@ -6,11 +6,11 @@ import org.study.utils.Result;
 import java.util.List;
 
 public interface RelationRepository {
-    Result<RelationIngredientRecipeModel> extractRelationByIngredientIdAndRecipeId(int recipeId, int ingredientId);
+    Result<RelationIngredientRecipeModel> extractRelation(int recipeId, int ingredientId);
 
-    Result<List<RelationIngredientRecipeModel>> extractRelationToListByRecipe(int recipeId);
+    Result<List<RelationIngredientRecipeModel>> extractRelationsByRecipeId(int recipeId);
 
-    Result<List<RelationIngredientRecipeModel>> extractRelationToListByIngredient(int ingredientId);
+    Result<List<RelationIngredientRecipeModel>> extractRelationsByIngredientId(int ingredientId);
 
     Result<Integer> insertRelation(int recipeId, int ingredientId);
 }
