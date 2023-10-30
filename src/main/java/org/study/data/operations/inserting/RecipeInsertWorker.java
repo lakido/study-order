@@ -52,6 +52,6 @@ public class RecipeInsertWorker {
 
         RecipeEntityExtractor recipeEntityExtractor = RecipeEntityExtractor.getInstance(connection);
 
-        return recipeEntityExtractor.extractRecipeFromDatabase(name).getId();
+        return recipeEntityExtractor.extractRecipeFromDatabaseByName(name).getId();
     }
 }

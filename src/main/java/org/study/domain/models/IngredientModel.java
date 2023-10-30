@@ -1,4 +1,4 @@
-package org.study.domain.entities;
+package org.study.domain.models;
 
 import org.study.data.entities.IngredientEntity;
 
@@ -15,7 +15,7 @@ public record IngredientModel(int id, String name, int calories, int weight, Str
                 tempModel.recommendation().equals(this.recommendation());
     }
 
-    public static IngredientEntity mapIngredientEntityToMode(IngredientModel ingredientModel) {
+    public static IngredientEntity mapIngredientModelToEntity(IngredientModel ingredientModel) {
         return new IngredientEntity(
                 ingredientModel.name,
                 ingredientModel.calories(),

@@ -1,6 +1,6 @@
 package org.study.domain.repository;
 
-import org.study.domain.entities.RelationIngredientRecipeModel;
+import org.study.domain.models.RelationIngredientRecipeModel;
 import org.study.utils.Result;
 
 import java.util.List;

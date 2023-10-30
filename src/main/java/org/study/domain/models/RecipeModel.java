@@ -1,4 +1,4 @@
-package org.study.domain.entities;
+package org.study.domain.models;
 
 import org.study.data.entities.RecipeEntity;
 

@@ -1,6 +1,6 @@
 package org.study.domain.usecases.relation;
 
-import org.study.domain.entities.RelationIngredientRecipeModel;
+import org.study.domain.models.RelationIngredientRecipeModel;
 import org.study.domain.repository.RelationRepository;
 import org.study.utils.Result;
 

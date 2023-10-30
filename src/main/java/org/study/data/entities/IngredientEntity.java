@@ -2,7 +2,7 @@ package org.study.data.entities;
 
 import org.study.data.exceptions.FailedReadException;
 import org.study.data.exceptions.UnexpectedException;
-import org.study.domain.entities.IngredientModel;
+import org.study.domain.models.IngredientModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

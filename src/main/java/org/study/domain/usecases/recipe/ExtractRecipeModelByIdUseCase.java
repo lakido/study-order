@@ -1,6 +1,6 @@
 package org.study.domain.usecases.recipe;
 
-import org.study.domain.entities.RecipeModel;
+import org.study.domain.models.RecipeModel;
 import org.study.domain.repository.RecipeRepository;
 import org.study.utils.Result;
 

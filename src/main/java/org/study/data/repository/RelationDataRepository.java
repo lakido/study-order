@@ -4,7 +4,7 @@ import org.study.data.entities.RelationIngredientRecipeEntity;
 import org.study.data.exceptions.*;
 import org.study.data.exceptions.Error;
 import org.study.data.sources.relation.RelationDataSource;
-import org.study.domain.entities.RelationIngredientRecipeModel;
+import org.study.domain.models.RelationIngredientRecipeModel;
 import org.study.domain.repository.RelationRepository;
 import org.study.utils.Result;
 
