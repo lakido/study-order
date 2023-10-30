@@ -1,7 +1,9 @@
 package org.study.domain.repository;
 
-import org.study.domain.entities.RecipeModel;
+import org.study.domain.models.RecipeModel;
 import org.study.utils.Result;
+
+import java.util.List;
 
 public interface RecipeRepository {
 
@@ -14,6 +16,8 @@ public interface RecipeRepository {
     Result<RecipeModel> extractRecipeModelByName(String name);
 
     Result<RecipeModel> extractRecipeModelById(int id);
+
+    Result<List<RecipeModel>> extractRecipeListOfFirstRecords(int limit);
 
     Result<Integer> insertRecipe(RecipeModel recipeModel);
 }

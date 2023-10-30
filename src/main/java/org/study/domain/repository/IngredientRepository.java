@@ -1,6 +1,6 @@
 package org.study.domain.repository;
 
-import org.study.domain.entities.IngredientModel;
+import org.study.domain.models.IngredientModel;
 import org.study.utils.Result;
 
 import java.util.List;
@@ -16,6 +16,8 @@ public interface IngredientRepository {
     Result<IngredientModel> extractIngredientModelById(int id);
 
     Result<IngredientModel> extractIngredientModelByName(String name);
+
+    Result<List<IngredientModel>> extractListOfFirstRecords(int limit);
 
     Result<Integer> insertIngredient(IngredientModel ingredientModel);
 

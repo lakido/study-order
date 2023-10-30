@@ -8,6 +8,8 @@ import org.study.data.operations.SinglePreparedStatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class IngredientEntityExtractor {
     private static ConnectionWrapper connection;
@@ -61,6 +63,20 @@ public class IngredientEntityExtractor {
         return ingredientEntity;
     }
 
+    public List<IngredientEntity> extractIngredientListOfFirstRecords(
+            int limit
+    ) throws FailedConnectingException, FailedStatementException, UnexpectedException, FailedReadException {
+        String query = "SELECT * FROM Ingredients LIMIT ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+        singlePreparedStatementWrapper.setInt(1, limit);
+
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetIngredientsEntity();
+
+        return new ArrayList<>(getIngredientEntityList(resultSet));
+    }
+
     private IngredientEntity createIngredientEntity(ResultSet resultSet) throws UnexpectedException {
         IngredientEntity ingredientEntity;
 
@@ -71,5 +87,19 @@ public class IngredientEntityExtractor {
         } catch (SQLException exception) {
             throw new UnexpectedException();
         }
+    }
+
+    private List<IngredientEntity> getIngredientEntityList(ResultSet resultSet) throws UnexpectedException {
+        List<IngredientEntity> ingredientEntityList = new ArrayList<>();
+
+        try {
+            while (resultSet.next()) {
+                ingredientEntityList.add(IngredientEntity.getIngredientEntity(resultSet));
+            }
+        } catch (SQLException exception) {
+            throw new UnexpectedException();
+        }
+
+        return ingredientEntityList;
     }
 }

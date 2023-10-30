@@ -4,7 +4,7 @@ import org.study.data.entities.IngredientEntity;
 import org.study.data.exceptions.Error;
 import org.study.data.exceptions.*;
 import org.study.data.sources.ingredient.IngredientDataSource;
-import org.study.domain.entities.IngredientModel;
+import org.study.domain.models.IngredientModel;
 import org.study.domain.repository.IngredientRepository;
 import org.study.utils.Result;
 
@@ -73,7 +73,7 @@ public class IngredientDataRepository implements IngredientRepository {
     @Override
     public Result<IngredientModel> extractIngredientModelById(int id) {
         try {
-            return new Result.Correct<>(dataSource.extractRecipeEntityById(id)).map(IngredientEntity::mapIngredientEntityToModel);
+            return new Result.Correct<>(dataSource.extractIngredientEntityById(id)).map(IngredientEntity::mapIngredientEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
             return new Result.Error<>(e);
         } catch (Exception exception) {
@@ -84,7 +84,18 @@ public class IngredientDataRepository implements IngredientRepository {
     @Override
     public Result<IngredientModel> extractIngredientModelByName(String name) {
         try {
-            return new Result.Correct<>(dataSource.extractRecipeEntityByName(name)).map(IngredientEntity::mapIngredientEntityToModel);
+            return new Result.Correct<>(dataSource.extractIngredientEntityByName(name)).map(IngredientEntity::mapIngredientEntityToModel);
+        } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
+            return new Result.Error<>(e);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<List<IngredientModel>> extractListOfFirstRecords(int limit) {
+        try {
+            return new Result.Correct<>(dataSource.extractListOfFirstRecords(limit).stream().map(IngredientEntity::mapIngredientEntityToModel).collect(Collectors.toList()));
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
             return new Result.Error<>(e);
         } catch (Exception exception) {
@@ -113,7 +124,7 @@ public class IngredientDataRepository implements IngredientRepository {
     public Result<Integer> insertListOfIngredients(List<IngredientModel> ingredientModels) {
         try {
             return new Result.Correct<>(dataSource.insertListOfIngredients(ingredientModels.stream()
-                    .map(IngredientModel::mapIngredientEntityToMode)
+                    .map(IngredientModel::mapIngredientModelToEntity)
                     .collect(Collectors.toList())
             ));
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException |

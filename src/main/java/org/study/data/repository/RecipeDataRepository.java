@@ -1,12 +1,15 @@
 package org.study.data.repository;
 
 import org.study.data.entities.RecipeEntity;
-import org.study.data.exceptions.*;
 import org.study.data.exceptions.Error;
+import org.study.data.exceptions.*;
 import org.study.data.sources.recipe.RecipeDataSource;
-import org.study.domain.entities.RecipeModel;
+import org.study.domain.models.RecipeModel;
 import org.study.domain.repository.RecipeRepository;
 import org.study.utils.Result;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RecipeDataRepository implements RecipeRepository {
 
@@ -83,6 +86,17 @@ public class RecipeDataRepository implements RecipeRepository {
             return new Result.Correct<>(dataSource.extractRecipeEntityById(id)).map(RecipeEntity::mapEntityToModel);
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<List<RecipeModel>> extractRecipeListOfFirstRecords(int limit) {
+        try {
+            return new Result.Correct<>(dataSource.extractRecipeListOfFirstRecords(limit).stream().map(RecipeEntity::mapEntityToModel).collect(Collectors.toList()));
+        } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
+            return new Result.Error<>(e);
         } catch (Exception exception) {
             return new Result.Error<>(new Error());
         }

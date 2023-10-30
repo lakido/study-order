@@ -7,6 +7,8 @@ import org.study.data.operations.deletion.RecipeDeleteWorker;
 import org.study.data.operations.extraction.RecipeEntityExtractor;
 import org.study.data.operations.inserting.RecipeInsertWorker;
 
+import java.util.List;
+
 public class RecipeDataSource implements RecipeDataSourceInterface {
 
     private final RecipeUpdateWorker recipeUpdateWorker;
@@ -77,14 +79,21 @@ public class RecipeDataSource implements RecipeDataSourceInterface {
     public RecipeEntity extractRecipeEntityById(
             int id
     ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
-        return recipeEntityExtractor.extractRecipeFromDatabase(id);
+        return recipeEntityExtractor.extractRecipeFromDatabaseById(id);
     }
 
     @Override
     public RecipeEntity extractRecipeEntityByName(
             String name
     ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
-        return recipeEntityExtractor.extractRecipeFromDatabase(name);
+        return recipeEntityExtractor.extractRecipeFromDatabaseByName(name);
+    }
+
+    @Override
+    public List<RecipeEntity> extractRecipeListOfFirstRecords(
+            int limit
+    ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
+        return recipeEntityExtractor.extractRecipeListOfFirstRecords(limit);
     }
 
     @Override

@@ -12,9 +12,11 @@ public interface IngredientDataSourceInterface {
 
     int deleteIngredientByName(String name) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
-    IngredientEntity extractRecipeEntityById(int id) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
+    IngredientEntity extractIngredientEntityById(int id) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
 
-    IngredientEntity extractRecipeEntityByName(String name) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
+    IngredientEntity extractIngredientEntityByName(String name) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
+
+    List<IngredientEntity> extractListOfFirstRecords(int limit) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
 
     int insertIngredient(IngredientEntity ingredientEntity) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 

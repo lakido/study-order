@@ -75,17 +75,24 @@ public class IngredientDataSource implements IngredientDataSourceInterface{
     }
 
     @Override
-    public IngredientEntity extractRecipeEntityById(
+    public IngredientEntity extractIngredientEntityById(
             int id
     ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
         return ingredientEntityExtractor.extractIngredientFromDatabaseById(id);
     }
 
     @Override
-    public IngredientEntity extractRecipeEntityByName(
+    public IngredientEntity extractIngredientEntityByName(
             String name
     ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
         return ingredientEntityExtractor.extractIngredientFromDatabaseByName(name);
+    }
+
+    @Override
+    public List<IngredientEntity> extractListOfFirstRecords(
+            int limit
+    ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
+        return ingredientEntityExtractor.extractIngredientListOfFirstRecords(limit);
     }
 
     @Override
