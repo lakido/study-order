@@ -106,10 +106,10 @@ public class RecipeDataRepository implements RecipeRepository {
     public Result<Integer> insertRecipe(RecipeModel recipeModel) {
         try {
             return new Result.Correct<>(dataSource.insertRecipe(new RecipeEntity(
-                    recipeModel.name(),
-                    recipeModel.category(),
-                    recipeModel.popularity(),
-                    recipeModel.agePreferences()))
+                    recipeModel.getName(),
+                    recipeModel.getCategory(),
+                    recipeModel.getPopularity(),
+                    recipeModel.getAgePreferences()))
             );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException | FailedConnectingException exception) {
             return new Result.Error<>(exception);

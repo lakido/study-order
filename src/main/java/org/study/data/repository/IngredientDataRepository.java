@@ -32,11 +32,11 @@ public class IngredientDataRepository implements IngredientRepository {
     public Result<Integer> updateIngredient(IngredientModel ingredientModel) {
         try {
             return new Result.Correct<>(dataSource.updateIngredient(IngredientEntity.getIngredientEntity(
-                    ingredientModel.id(),
-                    ingredientModel.name(),
-                    ingredientModel.calories(),
-                    ingredientModel.weight(),
-                    ingredientModel.recommendation()))
+                    ingredientModel.getId(),
+                    ingredientModel.getName(),
+                    ingredientModel.getCalories(),
+                    ingredientModel.getWeight(),
+                    ingredientModel.getRecommendation()))
             );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
                  FailedConnectingException e) {
@@ -107,10 +107,10 @@ public class IngredientDataRepository implements IngredientRepository {
     public Result<Integer> insertIngredient(IngredientModel ingredientModel) {
         try {
             return new Result.Correct<>(dataSource.insertIngredient(new IngredientEntity(
-                    ingredientModel.name(),
-                    ingredientModel.calories(),
-                    ingredientModel.weight(),
-                    ingredientModel.recommendation()))
+                    ingredientModel.getName(),
+                    ingredientModel.getCalories(),
+                    ingredientModel.getWeight(),
+                    ingredientModel.getRecommendation()))
             );
         } catch (UnexpectedException | FailedExecuteException | FailedStatementException |
                  FailedConnectingException e) {
