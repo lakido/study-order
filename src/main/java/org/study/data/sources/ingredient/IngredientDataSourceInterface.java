@@ -18,6 +18,10 @@ public interface IngredientDataSourceInterface {
 
     List<IngredientEntity> extractListOfFirstRecords(int limit) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
 
+    List<IngredientEntity> extractIngredientListByRecipeId(int recipeId) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
+
+    List<IngredientEntity> extractIngredientListByRecipeName(String name) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
+
     int insertIngredient(IngredientEntity ingredientEntity) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
     int insertListOfIngredients(List<IngredientEntity> ingredientEntityList) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;

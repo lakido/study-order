@@ -77,6 +77,46 @@ public class IngredientEntityExtractor {
         return new ArrayList<>(getIngredientEntityList(resultSet));
     }
 
+    public List<IngredientEntity> extractIngredientListByRecipeId(
+            int recipeId
+    ) throws FailedConnectingException, FailedStatementException, UnexpectedException, FailedReadException {
+        String query = """
+                SELECT Ingredients.*
+                FROM Ingredients\s
+                RIGHT JOIN Ingredients_Recipe ON Ingredients.id = Ingredients_Recipe.id_ingredients
+                WHERE Ingredients_Recipe.id_recipe = (?)""";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+        singlePreparedStatementWrapper.setInt(1, recipeId);
+
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetIngredientsEntity();
+
+        return new ArrayList<>(getIngredientEntityList(resultSet));
+    }
+
+    public List<IngredientEntity> extractIngredientListByRecipeName(
+            String recipeName
+    ) throws FailedConnectingException, FailedStatementException, UnexpectedException, FailedReadException {
+        String query = """
+                SELECT Ingredients.*
+                FROM Ingredients\s
+                RIGHT JOIN Ingredients_Recipe ON Ingredients.id = Ingredients_Recipe.id_ingredients
+                WHERE Ingredients_Recipe.id_recipe = (SELECT id FROM Recipe WHERE Recipe.name = "?")""";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+        singlePreparedStatementWrapper.setString(1, recipeName);
+
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetIngredientsEntity();
+
+        return new ArrayList<>(getIngredientEntityList(resultSet));
+    }
+
+
+
     private IngredientEntity createIngredientEntity(ResultSet resultSet) throws UnexpectedException {
         IngredientEntity ingredientEntity;
 

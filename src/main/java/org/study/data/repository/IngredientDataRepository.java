@@ -104,6 +104,28 @@ public class IngredientDataRepository implements IngredientRepository {
     }
 
     @Override
+    public Result<List<IngredientModel>> extractIngredientListByRecipeId(int recipeId){
+        try {
+            return new Result.Correct<>(dataSource.extractIngredientListByRecipeId(recipeId).stream().map(IngredientEntity::mapIngredientEntityToModel).collect(Collectors.toList()));
+        } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
+            return new Result.Error<>(e);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<List<IngredientModel>> extractIngredientListByRecipeName(String recipeName) {
+        try {
+            return new Result.Correct<>(dataSource.extractIngredientListByRecipeName(recipeName).stream().map(IngredientEntity::mapIngredientEntityToModel).collect(Collectors.toList()));
+        } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
+            return new Result.Error<>(e);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
     public Result<Integer> insertIngredient(IngredientModel ingredientModel) {
         try {
             return new Result.Correct<>(dataSource.insertIngredient(new IngredientEntity(

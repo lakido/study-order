@@ -19,6 +19,10 @@ public interface IngredientRepository {
 
     Result<List<IngredientModel>> extractListOfFirstRecords(int limit);
 
+    Result<List<IngredientModel>> extractIngredientListByRecipeId(int recipeId);
+
+    Result<List<IngredientModel>> extractIngredientListByRecipeName(String recipeName);
+
     Result<Integer> insertIngredient(IngredientModel ingredientModel);
 
     Result<Integer> insertListOfIngredients(List<IngredientModel> ingredientModels);
