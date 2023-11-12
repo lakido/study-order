@@ -1,14 +1,10 @@
 package org.study.ui.screens;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -26,14 +22,12 @@ public class MainScreen extends Application {
 
     private BorderPane borderPane;
     public static void main(String[] args) {
-
         launch(args);
     }
 
     @Override
     public void start(Stage stage) throws FailedConnectingException {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL xmlUrl = getClass().getResource("/Screens/MainScreen.fxml");
         fxmlLoader.setLocation(xmlUrl);
@@ -46,17 +40,30 @@ public class MainScreen extends Application {
             throw new RuntimeException(e);
         }
 
-        MainScreenController mainScreenController = fxmlLoader.getController();
-        mainScreenController.setStage(stage);
-
         Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
         stage.setScene(scene);
 
+        MainScreenController mainScreenController = fxmlLoader.getController();
+        handleWindowResizing(stage, mainScreenController);
+
+        stage.centerOnScreen();
+        stage.show();
+        centerStageAfterResizing(stage);
+    }
+
+    public static void openIngredientWindow(Stage stage) throws UnexpectedException {
+        IngredientScreen ingredientScreen = new IngredientScreen();
+        try {
+            ingredientScreen.start(stage);
+        } catch (Exception e) {
+            throw new UnexpectedException();
+        }
+    }
+
+    private void centerStageAfterResizing(Stage stage) {
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (!stage.isMaximized()) {
-                stage.setWidth(newValue.doubleValue());
-            }
 
             double centerX = screenBounds.getWidth() / 2 - stage.getWidth() / 2;
             double centerY = screenBounds.getHeight() / 2 - stage.getHeight() / 2;
@@ -66,17 +73,16 @@ public class MainScreen extends Application {
         });
 
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if (!stage.isMaximized()) {
-                stage.setHeight(newValue.doubleValue());
-            }
 
             double centerX = screenBounds.getWidth() / 2 - stage.getWidth() / 2;
             double centerY = screenBounds.getHeight() / 2 - stage.getHeight() / 2;
 
             stage.setX(centerX);
             stage.setY(centerY);
-        } );
+        });
+    }
 
+    private void handleWindowResizing(Stage stage, MainScreenController mainScreenController) {
         stage.addEventHandler(WindowEvent.WINDOW_SHOWING, windowEvent -> {
             stage.setWidth(NORMAL_SIZE_WIDTH);
             stage.setHeight(NORMAL_SIZE_HEIGHT);
@@ -86,19 +92,6 @@ public class MainScreen extends Application {
             stage.heightProperty().addListener((observableValue, oldValue, newValue) -> borderPane.setPrefHeight(newValue.doubleValue()));
             stage.widthProperty().addListener((observableValue, oldValue, newValue) -> borderPane.setPrefWidth(newValue.doubleValue()));
         });
-
-        stage.centerOnScreen();
-
-        stage.show();
-    }
-
-    public static void openIngredientWindow(Stage stage) throws UnexpectedException{
-        IngredientScreen ingredientScreen = new IngredientScreen();
-
-        try {
-            ingredientScreen.start(stage);
-        } catch (Exception e) {
-            throw new UnexpectedException();
-        }
     }
 }
+
