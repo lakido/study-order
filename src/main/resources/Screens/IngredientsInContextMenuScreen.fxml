@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.study.ui.controllers.IngredientScreenController"
+            fx:controller="org.study.ui.controllers.IngredientsInContextMenuScreenController"
             prefHeight="400.0" prefWidth="600.0">
 
     <center>
@@ -19,7 +19,7 @@
                 <TableColumn fx:id="ingredientWeightColumn" text="Weight"/>
                 <TableColumn fx:id="ingredientRecommendationColumn" text="Recommendation"/>
             </columns>
+
         </TableView>
     </center>
-
 </BorderPane>

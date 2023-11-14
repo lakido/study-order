@@ -23,7 +23,7 @@ import org.study.domain.usecases.ingredient.ExtractIngredientListByRecipeIdUseCa
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class IngredientScreenController implements Initializable {
+public class IngredientsInContextMenuScreenController implements Initializable {
 
     @FXML
     private TableView<IngredientModel> ingredientModelTableView;
@@ -59,7 +59,7 @@ public class IngredientScreenController implements Initializable {
 
     private final ExtractIngredientListByRecipeIdUseCase extractIngredientListByRecipeIdUseCase = new ExtractIngredientListByRecipeIdUseCase(ingredientDataRepository);
 
-    public IngredientScreenController() throws FailedConnectingException {
+    public IngredientsInContextMenuScreenController() throws FailedConnectingException {
     }
 
     @Override
