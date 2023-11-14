@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<?import javafx.collections.FXCollections?>
+<StackPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="org.study.ui.controllers.RecipeAddingController"
+          style="-fx-padding: 20 20 20 20"
+           minWidth="370">
+    <GridPane fx:id="gridPane" alignment="CENTER" vgap="40" hgap="40">
+
+        <Text text="Name: " GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="recipeNameTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Text text="Category: " GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox BorderPane.alignment="CENTER_RIGHT" fx:id="recipeCategoryComboBox" promptText="Select category" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Завтрак"/>
+                    <String fx:value="Обед"/>
+                    <String fx:value="Ужин"/>
+                    <String fx:value="Универсальное"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <Text text="Popularity: " GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Spinner fx:id="recipePopularitySpinner" editable="true" BorderPane.alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+
+        <Text text="Age preferences: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Spinner fx:id="recipeAgePreferencesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Button text="Add ingredient" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <ScrollPane BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <Button fx:id="addRecipeButton" text="Add Recipe" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" maxWidth="+Infinity"/>
+    </GridPane>
+</StackPane>
