@@ -30,8 +30,7 @@ import org.study.data.sources.recipe.RecipeDataSource;
 import org.study.domain.models.RecipeModel;
 import org.study.domain.repository.RecipeRepository;
 import org.study.domain.usecases.recipe.ExtractRecipeListOfFirstRecordsUseCase;
-import org.study.ui.screens.IngredientScreen;
-import org.study.ui.screens.MainScreen;
+import org.study.ui.screens.IngredientsInContextMenuScreen;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,7 +43,7 @@ public class MainScreenController implements Initializable {
     @FXML
     private AnchorPane anchor;
     @FXML
-    private VBox menu_VBox;
+    private VBox menuVBoxMainScreen;
 
     @FXML
     private Button button1;
@@ -77,7 +76,7 @@ public class MainScreenController implements Initializable {
     private TableColumn<RecipeModel, Integer> recipeAgePreferencesColumn;
 
     @FXML
-    private BorderPane border_pane;
+    private BorderPane borderPaneMainScreen;
 
     private final RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(
             RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
@@ -88,6 +87,27 @@ public class MainScreenController implements Initializable {
 
     private final RecipeRepository recipeRepository = RecipeDataRepository.getInstance(recipeDataSource);
 
+    @FXML
+    public void handleRecipeAddButtonClick() throws Exception {
+        Stage stage = new Stage();
+
+        Parent root;
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/AddRecipeScreen.fxml"));
+
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            e.getCause();
+            throw new UnexpectedException();
+        }
+
+        stage.setScene(new Scene(root));
+
+        stage.setTitle("Add recipe");
+
+        stage.show();
+    }
     public MainScreenController() throws FailedConnectingException {}
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -101,65 +121,19 @@ public class MainScreenController implements Initializable {
             TableRow<RecipeModel> row = new TableRow<>();
             row.setOnMouseClicked(mouseEvent -> {
                 if (!row.isEmpty() && mouseEvent.getClickCount() == 2) {
-                    RecipeModel recipeModel = row.getItem();
-
-                    Parent root;
-
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/IngredientScreen.fxml"));
-
-                    try {
-                        root = fxmlLoader.load();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    IngredientScreenController ingredientScreenController = fxmlLoader.getController();
-                    ingredientScreenController.setRecipeModel(recipeModel);
-
-                    ingredientScreenController.setFieldsByRecipeModel(recipeModel);
-
-                    Stage stage = new Stage();
-                    stage.setScene(new Scene(root));
-
-                    stage.setTitle("Ingredients");
-                    stage.initModality(Modality.APPLICATION_MODAL);
-
-                    handleDoubleClickToCreateWindowWithIngredients(stage);
+                    handleDoubleClickToCreateWindowWithIngredients(row);
                 }
             });
             return row;
         });
     }
-    @FXML
-    public void handleRecipeShowButtonClick() {
-        Stage stage = new Stage();
-
-        try {
-            MainScreen.openIngredientWindow(stage);
-        } catch (UnexpectedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public BorderPane getBorder_pane() {
-        return border_pane;
-    }
-
-    private void handleDoubleClickToCreateWindowWithIngredients(Stage stage) {
-        openIngredientWindow(stage);
-    }
-
-    private void openIngredientWindow (Stage stage) {
-        IngredientScreen ingredientScreen = new IngredientScreen();
-        try {
-            ingredientScreen.start(stage);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return borderPaneMainScreen;
     }
 
     private void createAndCustomizeTableView() {
-        startTableWithRecipes.prefWidthProperty().bind(border_pane.widthProperty().multiply(0.43));
+        startTableWithRecipes.prefWidthProperty().bind(borderPaneMainScreen.widthProperty().multiply(0.43));
 
         recipeNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         recipeCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
@@ -170,7 +144,43 @@ public class MainScreenController implements Initializable {
     }
 
     private void customizeVBox() {
-        menu_VBox.prefWidthProperty().bind(border_pane.widthProperty().multiply(0.3));
-        VBox.setVgrow(menu_VBox, Priority.ALWAYS);
+        menuVBoxMainScreen.prefWidthProperty().bind(borderPaneMainScreen.widthProperty().multiply(0.3));
+        VBox.setVgrow(menuVBoxMainScreen, Priority.ALWAYS);
+    }
+
+    private void handleDoubleClickToCreateWindowWithIngredients(TableRow<RecipeModel> row) {
+        RecipeModel recipeModel = row.getItem();
+
+        Parent root;
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/IngredientsInContextMenuScreen.fxml"));
+
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        IngredientsInContextMenuScreenController ingredientsInContextMenuScreenController = fxmlLoader.getController();
+        ingredientsInContextMenuScreenController.setRecipeModel(recipeModel);
+
+        ingredientsInContextMenuScreenController.setFieldsByRecipeModel(recipeModel);
+
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+
+        stage.setTitle("Ingredients");
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        openIngredientWindow(stage);
+    }
+
+    private void openIngredientWindow (Stage stage) {
+        IngredientsInContextMenuScreen ingredientsInContextMenuScreen = new IngredientsInContextMenuScreen();
+        try {
+            ingredientsInContextMenuScreen.start(stage);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -32,6 +32,7 @@ public class MainScreen extends Application {
         URL xmlUrl = getClass().getResource("/Screens/MainScreen.fxml");
         fxmlLoader.setLocation(xmlUrl);
 
+
         Parent root;
 
         try {
@@ -49,15 +50,6 @@ public class MainScreen extends Application {
         stage.centerOnScreen();
         stage.show();
         centerStageAfterResizing(stage);
-    }
-
-    public static void openIngredientWindow(Stage stage) throws UnexpectedException {
-        IngredientScreen ingredientScreen = new IngredientScreen();
-        try {
-            ingredientScreen.start(stage);
-        } catch (Exception e) {
-            throw new UnexpectedException();
-        }
     }
 
     private void centerStageAfterResizing(Stage stage) {
