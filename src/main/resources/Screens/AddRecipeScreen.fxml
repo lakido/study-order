@@ -11,15 +11,14 @@
 <StackPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
           fx:controller="org.study.ui.controllers.RecipeAddingController"
-          style="-fx-padding: 20 20 20 20"
-           minWidth="370">
+          style="-fx-padding: 20 20 20 20" minWidth="370">
     <GridPane fx:id="gridPane" alignment="CENTER" vgap="40" hgap="40">
 
         <Text text="Name: " GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="recipeNameTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <TextField fx:id="recipeNameTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="+Infinity"/>
 
         <Text text="Category: " GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <ComboBox BorderPane.alignment="CENTER_RIGHT" fx:id="recipeCategoryComboBox" promptText="Select category" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <ComboBox BorderPane.alignment="CENTER_RIGHT" fx:id="recipeCategoryComboBox" promptText="Select category" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="+Infinity">
             <items>
                 <FXCollections fx:factory="observableArrayList">
                     <String fx:value="Завтрак"/>
@@ -31,15 +30,27 @@
         </ComboBox>
 
         <Text text="Popularity: " GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Spinner fx:id="recipePopularitySpinner" editable="true" BorderPane.alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Spinner fx:id="recipePopularitySpinner" editable="true" BorderPane.alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="+Infinity"/>
 
 
         <Text text="Age preferences: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <Spinner fx:id="recipeAgePreferencesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Spinner fx:id="recipeAgePreferencesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="+Infinity"/>
 
-        <Button text="Add ingredient" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <ScrollPane BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Button fx:id="addIngredientButton" text="Add ingredient" GridPane.columnIndex="0" GridPane.rowIndex="4" onAction="#handleButtonToCreateNewWindow"/>
 
-        <Button fx:id="addRecipeButton" text="Add Recipe" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" maxWidth="+Infinity"/>
+        <TableView BorderPane.alignment="CENTER_RIGHT" fx:id="tableWithIngredientsToAdd" GridPane.columnIndex="1" GridPane.rowIndex="4" maxWidth="+Infinity" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN"/>
+            </columnResizePolicy>
+            <columns>
+                <TableColumn fx:id="ingredientNameColumn" text="Ingredient Name"/>
+                <TableColumn fx:id="ingredientWeightColumn" text="Weight"/>
+                <TableColumn fx:id="ingredientCaloriesColumn" text="Calories"/>
+                <TableColumn fx:id="ingredientRecommendationColumn" text="Recommendation"/>
+            </columns>
+        </TableView>
+
+        <Button fx:id="addRecipeButton" text="Add Recipe" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT"
+                GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" maxWidth="+Infinity"/>
     </GridPane>
 </StackPane>

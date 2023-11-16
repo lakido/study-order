@@ -16,10 +16,12 @@
     <GridPane fx:id="gridPaneIngredientAdding" alignment="CENTER" vgap="40" hgap="40">
 
         <Text text="Name: " GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="ingredientNameTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <TextField fx:id="ingredientNameTextField" alignment="CENTER_RIGHT"
+                   GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="+Infinity"/>
 
         <Text text="Calories: " GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <ComboBox BorderPane.alignment="CENTER_RIGHT" fx:id="ingredientRecommendationComboBox" promptText="Select recommendation" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <ComboBox BorderPane.alignment="CENTER_RIGHT" fx:id="ingredientRecommendationComboBox" promptText="Select recommendation"
+                  GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="+Infinity">
             <items>
                 <FXCollections fx:factory="observableArrayList">
                     <String fx:value="Варка"/>
@@ -33,12 +35,18 @@
         </ComboBox>
 
         <Text text="Weight: " GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Spinner fx:id="ingredientWeightSpinner" editable="true" BorderPane.alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Spinner fx:id="ingredientWeightSpinner" editable="true" BorderPane.alignment="CENTER"
+                 GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="+Infinity"/>
 
 
         <Text text="Calories: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <Spinner fx:id="ingredientCaloriesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Spinner fx:id="ingredientCaloriesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT"
+                 GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="+Infinity"/>
 
-        <Button fx:id="addIngredientButton" text="Confirm" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" maxWidth="+Infinity"/>
+        <Region GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"  GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <Button fx:id="confirmAddingIngredientButton" text="Confirm" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT"
+                GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" maxWidth="+Infinity"
+                onAction="#addIngredientWithSpecifiedParametersAsRecipePart"/>
     </GridPane>
 </StackPane>

@@ -1,10 +1,21 @@
 package org.study.ui.controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import org.study.data.exceptions.UnexpectedException;
+import org.study.domain.models.IngredientModel;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
@@ -24,6 +35,20 @@ public class RecipeAddingController implements Initializable {
     public Button addRecipeButton;
     @FXML
     public GridPane gridPane;
+    @FXML
+    public Button addIngredientButton;
+    @FXML
+    public TableView<IngredientModel> tableWithIngredientsToAdd;
+    @FXML
+    public TableColumn<IngredientModel, String> ingredientNameColumn;
+    @FXML
+    public TableColumn<IngredientModel, Integer> ingredientCaloriesColumn;
+    @FXML
+    public TableColumn<IngredientModel, Integer> ingredientWeightColumn;
+    @FXML
+    public TableColumn<IngredientModel, String> ingredientRecommendationColumn;
+
+    private final ObservableList<IngredientModel> observableList = FXCollections.observableArrayList();
 
     public RecipeAddingController() {}
 
@@ -32,11 +57,49 @@ public class RecipeAddingController implements Initializable {
         restrictionForRecipePopularitySpinner();
         restrictionForRecipeAgePreferencesSpinner();
         restrictionForTextField();
+        createAndCustomizeTableView();
 
     }
 
-    public GridPane getGridPane() {
-        return gridPane;
+    @FXML
+    public void handleButtonToCreateNewWindow(ActionEvent actionEvent) throws UnexpectedException {
+        Stage stage = new Stage() ;
+        Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
+
+        Parent root;
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/AddIngredientScreen.fxml"));
+
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            e.getCause();
+            throw new UnexpectedException();
+        }
+
+        IngredientAddingController ingredientAddingController = fxmlLoader.getController();
+        ingredientAddingController.setRecipeAddingController(this);
+
+        // here i adjust the size of the adding of ingredient window to the size of the previous window
+
+        stage.setScene(new Scene(root));
+        stage.setHeight(parentStage.getHeight());
+        stage.setWidth(parentStage.getWidth());
+        stage.setTitle("Add ingredient");
+
+        stage.show();
+    }
+
+    private void createAndCustomizeTableView() {
+        ingredientNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        ingredientCaloriesColumn.setCellValueFactory(new PropertyValueFactory<>("weight"));
+        ingredientWeightColumn.setCellValueFactory(new PropertyValueFactory<>("calories"));
+        ingredientRecommendationColumn.setCellValueFactory(new PropertyValueFactory<>("recommendation"));
+
+        tableWithIngredientsToAdd.setItems(observableList);
+    }
+
+    public void addIngredientModelToTheListView(IngredientModel ingredientModel) {
+        observableList.add(ingredientModel);
     }
 
     private void restrictionForRecipePopularitySpinner() {

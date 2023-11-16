@@ -1,9 +1,12 @@
 package org.study.ui.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import org.study.domain.models.IngredientModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,13 +25,40 @@ public class IngredientAddingController implements Initializable {
     @FXML
     public Spinner<Integer> ingredientCaloriesSpinner;
     @FXML
-    public Button addIngredientButton;
+    public Button confirmAddingIngredientButton;
+
+    private RecipeAddingController recipeAddingController;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         restrictionForIngredientWeightSpinner();
         restrictionForIngredientCaloriesSpinner();
         restrictionForTextField();
+    }
+
+    @FXML
+    public void addIngredientWithSpecifiedParametersAsRecipePart(ActionEvent actionEvent){
+        IngredientModel ingredientModel = new IngredientModel(
+                1,
+                ingredientNameTextField.getText(),
+                ingredientCaloriesSpinner.getValue(),
+                ingredientWeightSpinner.getValue(),
+                ingredientRecommendationComboBox.getValue()
+        );
+
+        RecipeAddingController recipeAddingController = getRecipeAddingController();
+        recipeAddingController.addIngredientModelToTheListView(ingredientModel);
+
+        Stage stage = (Stage) confirmAddingIngredientButton.getScene().getWindow();
+        stage.close();
+    }
+
+    public void setRecipeAddingController(RecipeAddingController recipeAddingController) {
+        this.recipeAddingController = recipeAddingController;
+    }
+
+    public RecipeAddingController getRecipeAddingController() {
+        return recipeAddingController;
     }
 
     private void restrictionForIngredientWeightSpinner() {
