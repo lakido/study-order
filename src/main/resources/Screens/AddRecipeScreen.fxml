@@ -50,7 +50,7 @@
             </columns>
         </TableView>
 
-        <Button fx:id="addRecipeButton" text="Add Recipe" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT"
+        <Button fx:id="addRecipeButton" text="Add Recipe" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT" onAction="#handleButtonToInsertNewRecipeIntoDatabase"
                 GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" maxWidth="+Infinity"/>
     </GridPane>
 </StackPane>
