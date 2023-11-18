@@ -19,5 +19,7 @@ public interface RecipeRepository {
 
     Result<List<RecipeModel>> extractRecipeListOfFirstRecords(int limit);
 
+    Result<Integer> extractNextAvailableIdForRecipe();
+
     Result<Integer> insertRecipe(RecipeModel recipeModel);
 }

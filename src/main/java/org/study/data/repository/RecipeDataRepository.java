@@ -12,12 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RecipeDataRepository implements RecipeRepository {
-
-    //TODO this is a component that should implement interaction data layer with other program layers
-    //TODO other program layer should not have an ability to use classes from data layer
-    //TODO this class should implement all operations that data layer can execute (insert, deletion, modifying, extracting)
-
-    //TODO all classes in data layer must be a singleton object (except Exceptions and entities)
     private static RecipeDataSource dataSource;
 
     private static RecipeDataRepository recipeDataRepositorySingleton;
@@ -98,6 +92,17 @@ public class RecipeDataRepository implements RecipeRepository {
         } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
             return new Result.Error<>(e);
         } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
+    public Result<Integer> extractNextAvailableIdForRecipe() {
+        try {
+            return new Result.Correct<>(dataSource.extractNextAvailableIdForRecipe());
+        } catch (UnexpectedException | FailedExecuteException | FailedConnectingException e) {
+            return new Result.Error<>(e);
+        } catch (Exception e) {
             return new Result.Error<>(new Error());
         }
     }

@@ -97,6 +97,11 @@ public class RecipeDataSource implements RecipeDataSourceInterface {
     }
 
     @Override
+    public Integer extractNextAvailableIdForRecipe() throws UnexpectedException, FailedExecuteException, FailedConnectingException {
+        return recipeEntityExtractor.extractNextAvailableIdForRecipe();
+    }
+
+    @Override
     public int insertRecipe(
             RecipeEntity recipeEntity
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {

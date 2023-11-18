@@ -1,12 +1,8 @@
 package org.study.data.operations.extraction;
 
 import org.study.data.connection.ConnectionWrapper;
-import org.study.data.entities.IngredientEntity;
 import org.study.data.entities.RecipeEntity;
-import org.study.data.exceptions.FailedConnectingException;
-import org.study.data.exceptions.FailedReadException;
-import org.study.data.exceptions.FailedStatementException;
-import org.study.data.exceptions.UnexpectedException;
+import org.study.data.exceptions.*;
 import org.study.data.operations.SinglePreparedStatementWrapper;
 
 import java.sql.PreparedStatement;
@@ -77,6 +73,25 @@ public class RecipeEntityExtractor {
         ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
 
         return new ArrayList<>(getRecipeEntityList(resultSet));
+    }
+
+    public int extractNextAvailableIdForRecipe() throws FailedConnectingException, FailedExecuteException, UnexpectedException {
+        String query = "SELECT MAX(id) from Recipe;";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQuery();
+
+        int result;
+
+        try {
+            result = resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new UnexpectedException();
+        }
+
+        return result + 1;
     }
 
     private RecipeEntity createEntityFromResultSet(ResultSet resultSet) throws UnexpectedException {
