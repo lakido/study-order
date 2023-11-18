@@ -110,6 +110,11 @@ public class IngredientDataSource implements IngredientDataSourceInterface{
     }
 
     @Override
+    public Integer extractNextAvailableIdForIngredient() throws UnexpectedException, FailedExecuteException, FailedConnectingException {
+        return ingredientEntityExtractor.extractNextAvailableIdForIngredient();
+    }
+
+    @Override
     public int insertListOfIngredients(
             List<IngredientEntity> ingredientEntityList
     ) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException {

@@ -115,7 +115,24 @@ public class IngredientEntityExtractor {
         return new ArrayList<>(getIngredientEntityList(resultSet));
     }
 
+    public int extractNextAvailableIdForIngredient() throws FailedConnectingException, FailedExecuteException, UnexpectedException {
+        String query = "SELECT MAX(id) from Ingredients;";
 
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQuery();
+
+        int result;
+
+        try {
+            result = resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new UnexpectedException();
+        }
+
+        return result + 1;
+    }
 
     private IngredientEntity createIngredientEntity(ResultSet resultSet) throws UnexpectedException {
         IngredientEntity ingredientEntity;

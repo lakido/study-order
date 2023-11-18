@@ -22,6 +22,8 @@ public interface IngredientDataSourceInterface {
 
     List<IngredientEntity> extractIngredientListByRecipeName(String name) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
 
+    Integer extractNextAvailableIdForIngredient() throws UnexpectedException, FailedExecuteException, FailedConnectingException;
+
     int insertIngredient(IngredientEntity ingredientEntity) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;
 
     int insertListOfIngredients(List<IngredientEntity> ingredientEntityList) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;

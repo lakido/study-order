@@ -126,6 +126,17 @@ public class IngredientDataRepository implements IngredientRepository {
     }
 
     @Override
+    public Result<Integer> extractNextAvailableIdForIngredient() {
+        try {
+            return new Result.Correct<>(dataSource.extractNextAvailableIdForIngredient());
+        } catch (UnexpectedException | FailedExecuteException | FailedConnectingException e) {
+            return new Result.Error<>(e);
+        } catch (Exception e) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
     public Result<Integer> insertIngredient(IngredientModel ingredientModel) {
         try {
             return new Result.Correct<>(dataSource.insertIngredient(new IngredientEntity(

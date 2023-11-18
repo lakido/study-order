@@ -23,6 +23,8 @@ public interface IngredientRepository {
 
     Result<List<IngredientModel>> extractIngredientListByRecipeName(String recipeName);
 
+    Result<Integer> extractNextAvailableIdForIngredient();
+
     Result<Integer> insertIngredient(IngredientModel ingredientModel);
 
     Result<Integer> insertListOfIngredients(List<IngredientModel> ingredientModels);
