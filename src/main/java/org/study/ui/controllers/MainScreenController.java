@@ -78,8 +78,6 @@ public class MainScreenController implements Initializable {
     @FXML
     private BorderPane borderPaneMainScreen;
 
-    private RecipeAddingController recipeAddingController;
-
     private final RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(
             RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
             RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
