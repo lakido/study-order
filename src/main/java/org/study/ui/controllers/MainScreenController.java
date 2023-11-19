@@ -7,10 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -35,30 +32,23 @@ import org.study.ui.screens.IngredientsInContextMenuScreen;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 public class MainScreenController implements Initializable {
 
     private final ObservableList<RecipeModel> recipeData = FXCollections.observableArrayList();
-
     @FXML
-    private AnchorPane anchor;
+    public Spinner<Integer> popularitySpinner;
+    @FXML
+    public ComboBox<String> categoryComboBox;
+    @FXML
+    public Spinner<Integer> preferredAgeSpinner;
+    @FXML
+    public Spinner<Integer> caloriesSpinner;
+
     @FXML
     private VBox menuVBoxMainScreen;
-
-    @FXML
-    private Button button1;
-
-    @FXML
-    private Button button2;
-
-    @FXML
-    private Button button3;
-
-    @FXML
-    private Button button4;
-
-    @FXML
-    private Button button5;
 
     @FXML
     private TableView<RecipeModel> startTableWithRecipes;
@@ -115,6 +105,7 @@ public class MainScreenController implements Initializable {
     public MainScreenController() throws FailedConnectingException {}
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setRestrictions();
         customizeVBox();
 
         ExtractRecipeListOfFirstRecordsUseCase extractRecipeListOfFirstRecordsUseCase = new ExtractRecipeListOfFirstRecordsUseCase(recipeRepository);
@@ -195,5 +186,68 @@ public class MainScreenController implements Initializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void setRestrictions() {
+        restrictionForRecipePopularitySpinner();
+        restrictionForRecipeAgeSpinner();
+        restrictionForRecipeCaloriesSpinner();
+    }
+
+    private void restrictionForRecipePopularitySpinner() {
+        SpinnerValueFactory<Integer> recipePopularitySpinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50, 5);
+
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+
+            if (Pattern.matches("\\d{0,3}", newText)) {
+                return change;
+            } else {
+                return null;
+            }
+        };
+
+        TextFormatter<Integer> textFormatter = new TextFormatter<>(recipePopularitySpinnerValueFactory.getConverter(), recipePopularitySpinnerValueFactory.getValue(), filter);
+
+        popularitySpinner.setValueFactory(recipePopularitySpinnerValueFactory);
+        popularitySpinner.getEditor().setTextFormatter(textFormatter);
+    }
+
+    private void restrictionForRecipeAgeSpinner() {
+        SpinnerValueFactory<Integer> recipePopularitySpinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 18, 1);
+
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+
+            if (Pattern.matches("\\d{0,3}", newText)) {
+                return change;
+            } else {
+                return null;
+            }
+        };
+
+        TextFormatter<Integer> textFormatter = new TextFormatter<>(recipePopularitySpinnerValueFactory.getConverter(), recipePopularitySpinnerValueFactory.getValue(), filter);
+
+        preferredAgeSpinner.setValueFactory(recipePopularitySpinnerValueFactory);
+        preferredAgeSpinner.getEditor().setTextFormatter(textFormatter);
+    }
+
+    private void restrictionForRecipeCaloriesSpinner() {
+        SpinnerValueFactory<Integer> recipePopularitySpinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 20000, 200, 50);
+
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+
+            if (Pattern.matches("\\d{0,3}", newText)) {
+                return change;
+            } else {
+                return null;
+            }
+        };
+
+        TextFormatter<Integer> textFormatter = new TextFormatter<>(recipePopularitySpinnerValueFactory.getConverter(), recipePopularitySpinnerValueFactory.getValue(), filter);
+
+        caloriesSpinner.setValueFactory(recipePopularitySpinnerValueFactory);
+        caloriesSpinner.getEditor().setTextFormatter(textFormatter);
     }
 }
