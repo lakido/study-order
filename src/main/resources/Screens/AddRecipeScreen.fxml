@@ -36,7 +36,7 @@
         <Text text="Age preferences: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <Spinner fx:id="recipeAgePreferencesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="+Infinity"/>
 
-        <Button fx:id="addIngredientButton" text="Add ingredient" GridPane.columnIndex="0" GridPane.rowIndex="4" onAction="#handleButtonToCreateNewWindow"/>
+        <Button fx:id="addIngredientButton" text="Add ingredient" GridPane.columnIndex="0" GridPane.rowIndex="4" onAction="#handleButtonToCreateNewWindowToInsertNewRecipe"/>
 
         <TableView BorderPane.alignment="CENTER_RIGHT" fx:id="tableWithIngredientsToAdd" GridPane.columnIndex="1" GridPane.rowIndex="4" maxWidth="+Infinity" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
             <columnResizePolicy>

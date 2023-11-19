@@ -95,7 +95,7 @@ public class RecipeAddingController implements Initializable {
     }
 
     @FXML
-    public void handleButtonToCreateNewWindow(ActionEvent actionEvent) throws UnexpectedException {
+    public void handleButtonToCreateNewWindowToInsertNewRecipe(ActionEvent actionEvent) throws UnexpectedException {
         Stage stage = new Stage() ;
         Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
 
