@@ -10,7 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.exceptions.FailedConnectingException;
@@ -82,6 +82,8 @@ public class RecipeAddingController implements Initializable {
     private IngredientDataRepository ingredientDataRepository;
 
     private RelationRepository relationRepository;
+
+    private MainScreenController mainScreenController;
 
     public RecipeAddingController() {}
 
@@ -195,8 +197,16 @@ public class RecipeAddingController implements Initializable {
         initRelationRepository();
         addRecipe();
 
+        if (mainScreenController != null) {
+            mainScreenController.refreshTableView();
+        }
+
         Stage stage = (Stage) addIngredientButton.getScene().getWindow();
         stage.close();
+    }
+
+    public void setMainScreenController(MainScreenController mainScreenController) {
+        this.mainScreenController = mainScreenController;
     }
 
     private void initRecipeDataRepository() throws FailedConnectingException {

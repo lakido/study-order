@@ -78,6 +78,8 @@ public class MainScreenController implements Initializable {
     @FXML
     private BorderPane borderPaneMainScreen;
 
+    private RecipeAddingController recipeAddingController;
+
     private final RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(
             RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
             RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
@@ -106,6 +108,10 @@ public class MainScreenController implements Initializable {
 
         stage.setTitle("Add recipe");
 
+//      installing the controller of the parent window on the child window at the place where the new window is created
+        RecipeAddingController recipeAddingController = fxmlLoader.getController();
+        recipeAddingController.setMainScreenController(this);
+
         stage.show();
     }
     public MainScreenController() throws FailedConnectingException {}
@@ -114,7 +120,7 @@ public class MainScreenController implements Initializable {
         customizeVBox();
 
         ExtractRecipeListOfFirstRecordsUseCase extractRecipeListOfFirstRecordsUseCase = new ExtractRecipeListOfFirstRecordsUseCase(recipeRepository);
-        recipeData.addAll(extractRecipeListOfFirstRecordsUseCase.invoke(10).getOrNull());
+        recipeData.addAll(extractRecipeListOfFirstRecordsUseCase.invoke(100).getOrNull());
         createAndCustomizeTableView();
 
         startTableWithRecipes.setRowFactory(recipeModelTableView -> {
@@ -130,6 +136,15 @@ public class MainScreenController implements Initializable {
 
     public BorderPane getBorder_pane() {
         return borderPaneMainScreen;
+    }
+
+    public void refreshTableView() {
+        recipeData.clear();
+        startTableWithRecipes.refresh();
+
+        ExtractRecipeListOfFirstRecordsUseCase extractRecipeListOfFirstRecordsUseCase = new ExtractRecipeListOfFirstRecordsUseCase(recipeRepository);
+        recipeData.addAll(extractRecipeListOfFirstRecordsUseCase.invoke(recipeData.size()).getOrNull());
+        startTableWithRecipes.refresh();
     }
 
     private void createAndCustomizeTableView() {
