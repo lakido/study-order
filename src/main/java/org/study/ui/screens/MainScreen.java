@@ -10,7 +10,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.study.data.exceptions.FailedConnectingException;
-import org.study.data.exceptions.UnexpectedException;
 import org.study.ui.controllers.MainScreenController;
 
 import java.io.IOException;
