@@ -75,6 +75,24 @@ public class RecipeEntityExtractor {
         return new ArrayList<>(getRecipeEntityList(resultSet));
     }
 
+    public List<RecipeEntity> extractRecipeList(
+            String category,
+            int popularity,
+            int agePreferences
+    ) throws FailedConnectingException, UnexpectedException, FailedReadException, FailedStatementException {
+        String query = "SELECT * FROM Recipe WHERE popularity > ? AND category = ? AND age_preferences > ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        SinglePreparedStatementWrapper singlePreparedStatementWrapper = new SinglePreparedStatementWrapper(preparedStatement);
+        singlePreparedStatementWrapper.setInt(1, popularity);
+        singlePreparedStatementWrapper.setString(2, category);
+        singlePreparedStatementWrapper.setInt(3, agePreferences);
+
+        ResultSet resultSet = singlePreparedStatementWrapper.executeQueryToGetRecipeEntity();
+
+        return new ArrayList<>(getRecipeEntityList(resultSet));
+    }
+
     public int extractNextAvailableIdForRecipe() throws FailedConnectingException, FailedExecuteException, UnexpectedException {
         String query = "SELECT MAX(id) from Recipe;";
 

@@ -97,6 +97,15 @@ public class RecipeDataSource implements RecipeDataSourceInterface {
     }
 
     @Override
+    public List<RecipeEntity> extractRecipeList(
+            String category,
+            int popularity,
+            int agePreferences
+    ) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException {
+        return recipeEntityExtractor.extractRecipeList(category, popularity, agePreferences);
+    }
+
+    @Override
     public Integer extractNextAvailableIdForRecipe() throws UnexpectedException, FailedExecuteException, FailedConnectingException {
         return recipeEntityExtractor.extractNextAvailableIdForRecipe();
     }

@@ -19,6 +19,8 @@ public interface RecipeDataSourceInterface {
 
     List<RecipeEntity> extractRecipeListOfFirstRecords(int limit) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
 
+    List<RecipeEntity> extractRecipeList( String category, int popularity, int agePreferences) throws UnexpectedException, FailedReadException, FailedStatementException, FailedConnectingException;
+
     Integer extractNextAvailableIdForRecipe() throws UnexpectedException, FailedExecuteException, FailedConnectingException;
 
     int insertRecipe(RecipeEntity recipeEntity) throws UnexpectedException, FailedExecuteException, FailedStatementException, FailedConnectingException;

@@ -19,6 +19,8 @@ public interface RecipeRepository {
 
     Result<List<RecipeModel>> extractRecipeListOfFirstRecords(int limit);
 
+    Result<List<RecipeModel>> extractRecipeList( String category, int popularity, int agePreferences);
+
     Result<Integer> extractNextAvailableIdForRecipe();
 
     Result<Integer> insertRecipe(RecipeModel recipeModel);

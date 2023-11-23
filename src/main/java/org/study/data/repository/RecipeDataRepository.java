@@ -97,6 +97,17 @@ public class RecipeDataRepository implements RecipeRepository {
     }
 
     @Override
+    public Result<List<RecipeModel>> extractRecipeList(String category, int popularity, int agePreferences) {
+        try {
+            return new Result.Correct<>(dataSource.extractRecipeList(category, popularity, agePreferences).stream().map(RecipeEntity::mapEntityToModel).collect(Collectors.toList()));
+        } catch (UnexpectedException | FailedReadException | FailedStatementException | FailedConnectingException e) {
+            return new Result.Error<>(e);
+        } catch (Exception exception) {
+            return new Result.Error<>(new Error());
+        }
+    }
+
+    @Override
     public Result<Integer> extractNextAvailableIdForRecipe() {
         try {
             return new Result.Correct<>(dataSource.extractNextAvailableIdForRecipe());
