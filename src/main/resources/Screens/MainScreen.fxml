@@ -20,7 +20,7 @@
 
                     <Button fx:id="button1" text="Add Recipe" prefWidth="Infinity" prefHeight="50" onAction="#handleRecipeAddButtonClick"/>
 
-                    <GridPane vgap="90" alignment="CENTER" prefWidth="Infinity" maxWidth="Infinity">
+                    <GridPane vgap="90" alignment="CENTER" maxWidth="Infinity">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="30"/>
                             <ColumnConstraints percentWidth="70"/>
@@ -31,7 +31,7 @@
                         GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                         <Text text="Category:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                        <ComboBox fx:id="categoryComboBox" editable="true" BorderPane.alignment="CENTER_RIGHT" maxWidth="+Infinity" promptText="Select Category"
+                        <ComboBox fx:id="categoryComboBox" editable="true" BorderPane.alignment="CENTER_LEFT" maxWidth="+Infinity" promptText="Select Category"
                                   GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <items>
                                 <FXCollections fx:factory="observableArrayList">
@@ -44,15 +44,15 @@
                         </ComboBox>
 
                         <Text text="Age preferences:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                        <Spinner fx:id="preferredAgeSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" maxWidth="+Infinity"
+                        <Spinner fx:id="preferredAgeSpinner" editable="true" BorderPane.alignment="CENTER_LEFT" maxWidth="+Infinity"
                                  GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                        <Text text="Calories:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                        <Spinner fx:id="caloriesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" maxWidth="+Infinity"
+                        <Text text="Up to calories:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Spinner fx:id="caloriesSpinner" editable="true" BorderPane.alignment="CENTER_LEFT" maxWidth="+Infinity"
                                  GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                     </GridPane>
 
-                    <Button fx:id="searchButton" text="Search" prefWidth="Infinity" prefHeight="50"/>
+                    <Button fx:id="searchButton" text="Search" prefWidth="Infinity" prefHeight="50" onAction="#findARecipes"/>
                 </VBox>
             </left>
 
@@ -65,7 +65,7 @@
                         <TableColumn fx:id="recipeNameColumn" text="Recipe Name"/>
                         <TableColumn fx:id="recipePopularityColumn" text="Popularity"/>
                         <TableColumn fx:id="recipeCategoryColumn" text="Category"/>
-                        <TableColumn fx:id="recipeAgePreferencesColumn" text="Age_preferences"/>
+                        <TableColumn fx:id="recipeAgePreferencesColumn" text="Age preferences"/>
                     </columns>
                 </TableView>
             </right>

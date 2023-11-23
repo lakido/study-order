@@ -9,7 +9,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -18,20 +17,30 @@ import javafx.stage.Stage;
 import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.exceptions.FailedConnectingException;
 import org.study.data.exceptions.UnexpectedException;
+import org.study.data.operations.changing.IngredientUpdateWorker;
 import org.study.data.operations.changing.RecipeUpdateWorker;
+import org.study.data.operations.deletion.IngredientDeleteWorker;
 import org.study.data.operations.deletion.RecipeDeleteWorker;
+import org.study.data.operations.extraction.IngredientEntityExtractor;
 import org.study.data.operations.extraction.RecipeEntityExtractor;
+import org.study.data.operations.inserting.IngredientInsertWorker;
 import org.study.data.operations.inserting.RecipeInsertWorker;
+import org.study.data.repository.IngredientDataRepository;
 import org.study.data.repository.RecipeDataRepository;
+import org.study.data.sources.ingredient.IngredientDataSource;
 import org.study.data.sources.recipe.RecipeDataSource;
+import org.study.domain.models.IngredientModel;
 import org.study.domain.models.RecipeModel;
+import org.study.domain.repository.IngredientRepository;
 import org.study.domain.repository.RecipeRepository;
+import org.study.domain.usecases.ingredient.ExtractIngredientListByRecipeIdUseCase;
 import org.study.domain.usecases.recipe.ExtractRecipeListOfFirstRecordsUseCase;
+import org.study.domain.usecases.recipe.ExtractRecipeListUseCase;
 import org.study.ui.screens.IngredientsInContextMenuScreen;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
@@ -75,8 +84,35 @@ public class MainScreenController implements Initializable {
             RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
     );
 
-    private final RecipeRepository recipeRepository = RecipeDataRepository.getInstance(recipeDataSource);
+    private final IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(
+            IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
+            IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
+            IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
+            IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
+    );
 
+    private final RecipeRepository recipeRepository = RecipeDataRepository.getInstance(recipeDataSource);
+    private final IngredientRepository ingredientRepository = IngredientDataRepository.getInstance(ingredientDataSource);
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setRestrictions();
+        customizeVBox();
+
+        ExtractRecipeListOfFirstRecordsUseCase extractRecipeListOfFirstRecordsUseCase = new ExtractRecipeListOfFirstRecordsUseCase(recipeRepository);
+        recipeData.addAll(extractRecipeListOfFirstRecordsUseCase.invoke(100).getOrNull());
+        createAndCustomizeTableView();
+
+        startTableWithRecipes.setRowFactory(recipeModelTableView -> {
+            TableRow<RecipeModel> row = new TableRow<>();
+            row.setOnMouseClicked(mouseEvent -> {
+                if (!row.isEmpty() && mouseEvent.getClickCount() == 2) {
+                    handleDoubleClickToCreateWindowWithIngredients(row);
+                }
+            });
+            return row;
+        });
+    }
     @FXML
     public void handleRecipeAddButtonClick() throws Exception {
         Stage stage = new Stage();
@@ -103,25 +139,6 @@ public class MainScreenController implements Initializable {
         stage.show();
     }
     public MainScreenController() throws FailedConnectingException {}
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        setRestrictions();
-        customizeVBox();
-
-        ExtractRecipeListOfFirstRecordsUseCase extractRecipeListOfFirstRecordsUseCase = new ExtractRecipeListOfFirstRecordsUseCase(recipeRepository);
-        recipeData.addAll(extractRecipeListOfFirstRecordsUseCase.invoke(100).getOrNull());
-        createAndCustomizeTableView();
-
-        startTableWithRecipes.setRowFactory(recipeModelTableView -> {
-            TableRow<RecipeModel> row = new TableRow<>();
-            row.setOnMouseClicked(mouseEvent -> {
-                if (!row.isEmpty() && mouseEvent.getClickCount() == 2) {
-                    handleDoubleClickToCreateWindowWithIngredients(row);
-                }
-            });
-            return row;
-        });
-    }
 
     public BorderPane getBorder_pane() {
         return borderPaneMainScreen;
@@ -238,7 +255,7 @@ public class MainScreenController implements Initializable {
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();
 
-            if (Pattern.matches("\\d{0,3}", newText)) {
+            if (Pattern.matches("\\d{0,5}", newText)) {
                 return change;
             } else {
                 return null;
@@ -250,4 +267,42 @@ public class MainScreenController implements Initializable {
         caloriesSpinner.setValueFactory(recipePopularitySpinnerValueFactory);
         caloriesSpinner.getEditor().setTextFormatter(textFormatter);
     }
+    @FXML
+    public void findARecipes() {
+        Integer popularity = popularitySpinner.getValue();
+        String category = categoryComboBox.getValue();
+        Integer preferredAge = preferredAgeSpinner.getValue();
+        Integer calories = caloriesSpinner.getValue();
+
+        ExtractRecipeListUseCase extractRecipeListUseCase = new ExtractRecipeListUseCase(recipeRepository);
+        List<RecipeModel> recipeModelList = new ArrayList<>(extractRecipeListUseCase.invoke(category, popularity, preferredAge).getOrNull());
+
+        Map<RecipeModel, List<IngredientModel>> recipeModelListMap = new HashMap<>();
+
+        for(RecipeModel recipeModel: recipeModelList) {
+            ExtractIngredientListByRecipeIdUseCase extractIngredientListByRecipeIdUseCase = new ExtractIngredientListByRecipeIdUseCase(ingredientRepository);
+            recipeModelListMap.put(recipeModel, extractIngredientListByRecipeIdUseCase.invoke(recipeModel.getId()).getOrNull());
+        }
+
+        Iterator<Map.Entry<RecipeModel, List<IngredientModel>>> iterator = recipeModelListMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<RecipeModel, List<IngredientModel>> entry = iterator.next();
+
+            List<IngredientModel> list = new ArrayList<>(entry.getValue());
+
+            int sumOfCalories = 0;
+
+            for(IngredientModel ingredientModel: list) {
+                sumOfCalories += ingredientModel.getCalories();
+            }
+
+            if (sumOfCalories > calories) iterator.remove();
+        }
+
+        recipeData.clear();
+        recipeData.addAll(recipeModelListMap.keySet());
+        startTableWithRecipes.refresh();
+    }
+
+
 }
