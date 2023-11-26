@@ -31,8 +31,9 @@ public final class IngredientModel {
     }
 
     public static IngredientEntity mapIngredientModelToEntity(IngredientModel ingredientModel) {
-        return new IngredientEntity(
-                ingredientModel.name,
+        return IngredientEntity.getIngredientEntity(
+                ingredientModel.getId(),
+                ingredientModel.getName(),
                 ingredientModel.getCalories(),
                 ingredientModel.getWeight(),
                 ingredientModel.getRecommendation()

@@ -31,11 +31,12 @@ public final class RecipeModel {
     }
 
     public static RecipeEntity mapRecipeModelToEntity(RecipeModel recipeModel) {
-        return new RecipeEntity(
+        return RecipeEntity.getRecipeEntity(
+                recipeModel.getId(),
                 recipeModel.getName(),
                 recipeModel.getCategory(),
                 recipeModel.getPopularity(),
-                recipeModel.getAgePreferences()
+                recipeModel.getPopularity()
         );
     }
 
