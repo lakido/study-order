@@ -34,8 +34,10 @@ import org.study.domain.models.RecipeModel;
 import org.study.domain.repository.IngredientRepository;
 import org.study.domain.repository.RecipeRepository;
 import org.study.domain.usecases.ingredient.ExtractIngredientListByRecipeIdUseCase;
+import org.study.domain.usecases.recipe.DeleteRecipeByNameUseCase;
 import org.study.domain.usecases.recipe.ExtractRecipeListOfFirstRecordsUseCase;
 import org.study.domain.usecases.recipe.ExtractRecipeListUseCase;
+import org.study.ui.screens.EditingRecipeScreen;
 import org.study.ui.screens.IngredientsInContextMenuScreen;
 
 import java.io.IOException;
@@ -149,8 +151,12 @@ public class MainScreenController implements Initializable {
         startTableWithRecipes.refresh();
 
         ExtractRecipeListOfFirstRecordsUseCase extractRecipeListOfFirstRecordsUseCase = new ExtractRecipeListOfFirstRecordsUseCase(recipeRepository);
-        recipeData.addAll(extractRecipeListOfFirstRecordsUseCase.invoke(recipeData.size()).getOrNull());
+        recipeData.addAll(extractRecipeListOfFirstRecordsUseCase.invoke(50).getOrNull());
         startTableWithRecipes.refresh();
+    }
+
+    public ObservableList<RecipeModel> getCopyOfRecipeData() {
+        return FXCollections.observableArrayList(recipeData);
     }
 
     private void createAndCustomizeTableView() {
@@ -304,5 +310,42 @@ public class MainScreenController implements Initializable {
         startTableWithRecipes.refresh();
     }
 
+    @FXML
+    public void editRecipeInContextMenu() throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/EditingRecipeScreen.fxml"));
+        Parent root = null;
 
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Edit Recipe");
+
+        RecipeEditingController recipeEditingController = fxmlLoader.getController();
+        recipeEditingController.setMainScreenController(this);
+
+        EditingRecipeScreen editingRecipeScreen = new EditingRecipeScreen();
+        editingRecipeScreen.start(stage);
+
+        RecipeModel recipeModel = startTableWithRecipes.getSelectionModel().getSelectedItem();
+        recipeEditingController.setRecipeModel(recipeModel);
+        recipeEditingController.fillAndCustomizeTable();
+
+        recipeEditingController.setTableWithIngredientsByRecipeModel();
+    }
+
+    @FXML
+    public void deleteRecipeInContextMenu() {
+        RecipeModel recipeModel = startTableWithRecipes.getSelectionModel().getSelectedItem();
+
+        DeleteRecipeByNameUseCase deleteRecipeByNameUseCase = new DeleteRecipeByNameUseCase(recipeRepository);
+        deleteRecipeByNameUseCase.invoke(recipeModel.getName());
+
+        recipeData.remove(recipeModel);
+        startTableWithRecipes.refresh();
+    }
 }
