@@ -12,7 +12,7 @@ public class RecipeAddingScreen extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/AddRecipeScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/AddRecipeScreen.fxml"));
         Parent root;
 
         try {

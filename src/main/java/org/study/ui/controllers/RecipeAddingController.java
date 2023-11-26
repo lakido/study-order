@@ -49,7 +49,6 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class RecipeAddingController implements Initializable {
-
     @FXML
     public TextField recipeNameTextField;
     @FXML
@@ -97,12 +96,12 @@ public class RecipeAddingController implements Initializable {
     }
 
     @FXML
-    public void handleButtonToCreateNewWindowToInsertNewRecipe(ActionEvent actionEvent) throws UnexpectedException {
+    public void handleButtonToCreateNewWindowToInsertNewIngredient(ActionEvent actionEvent) throws UnexpectedException {
         Stage stage = new Stage() ;
         Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
 
         Parent root;
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/AddIngredientScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/AddIngredientScreen.fxml"));
 
         try {
             root = fxmlLoader.load();

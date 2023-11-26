@@ -28,7 +28,7 @@ public class MainScreen extends Application {
     public void start(Stage stage) throws FailedConnectingException {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL xmlUrl = getClass().getResource("/Screens/MainScreen.fxml");
+        URL xmlUrl = getClass().getResource("/screens/MainScreen.fxml");
         fxmlLoader.setLocation(xmlUrl);
 
 

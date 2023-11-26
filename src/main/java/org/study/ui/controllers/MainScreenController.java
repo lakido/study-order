@@ -119,7 +119,7 @@ public class MainScreenController implements Initializable {
 
         Parent root;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/AddRecipeScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/AddRecipeScreen.fxml"));
 
         try {
             root = fxmlLoader.load();
@@ -174,7 +174,7 @@ public class MainScreenController implements Initializable {
 
         Parent root;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Screens/IngredientsInContextMenuScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/IngredientsInContextMenuScreen.fxml"));
 
         try {
             root = fxmlLoader.load();
