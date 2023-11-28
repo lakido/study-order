@@ -2,7 +2,6 @@ package org.study.ui.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -76,15 +75,15 @@ public class RecipeAddingController implements Initializable {
 
     private final ObservableList<IngredientModel> observableList = FXCollections.observableArrayList();
 
-    private RecipeDataRepository recipeDataRepository;
+    private final RecipeDataRepository recipeDataRepository = initRecipeDataRepository();
 
-    private IngredientDataRepository ingredientDataRepository;
+    private final IngredientDataRepository ingredientDataRepository = initIngredientDataRepository();
 
-    private RelationRepository relationRepository;
+    private final RelationRepository relationRepository = initRelationRepository();
 
     private MainScreenController mainScreenController;
 
-    public RecipeAddingController() {}
+    public RecipeAddingController() throws FailedConnectingException {}
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
@@ -92,11 +91,10 @@ public class RecipeAddingController implements Initializable {
         restrictionForRecipeAgePreferencesSpinner();
         restrictionForTextField();
         createAndCustomizeTableView();
-
     }
 
     @FXML
-    public void handleButtonToCreateNewWindowToInsertNewIngredient(ActionEvent actionEvent) throws UnexpectedException {
+    public void handleButtonToCreateNewWindowToInsertNewIngredient() throws UnexpectedException {
         Stage stage = new Stage() ;
         Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
 
@@ -113,7 +111,7 @@ public class RecipeAddingController implements Initializable {
         IngredientAddingController ingredientAddingController = fxmlLoader.getController();
         ingredientAddingController.setRecipeAddingController(this);
 
-        // here i adjust the size of the adding of ingredient window to the size of the previous window
+        // here I adjust the size of the adding of ingredient window to the size of the previous window
 
         stage.setScene(new Scene(root));
         stage.setHeight(parentStage.getHeight());
@@ -121,6 +119,18 @@ public class RecipeAddingController implements Initializable {
         stage.setTitle("Add ingredient");
 
         stage.show();
+    }
+
+    @FXML
+    public void handleButtonToInsertNewRecipeIntoDatabase() {
+        addRecipe();
+
+        if (mainScreenController != null) {
+            mainScreenController.refreshTableView();
+        }
+
+        Stage stage = (Stage) addIngredientButton.getScene().getWindow();
+        stage.close();
     }
 
     private void createAndCustomizeTableView() {
@@ -189,51 +199,8 @@ public class RecipeAddingController implements Initializable {
         recipeNameTextField.setTextFormatter(textFormatter);
     }
 
-    @FXML
-    public void handleButtonToInsertNewRecipeIntoDatabase(ActionEvent actionEvent) throws FailedConnectingException {
-        initRecipeDataRepository();
-        initIngredientDataRepository();
-        initRelationRepository();
-        addRecipe();
-
-        if (mainScreenController != null) {
-            mainScreenController.refreshTableView();
-        }
-
-        Stage stage = (Stage) addIngredientButton.getScene().getWindow();
-        stage.close();
-    }
-
     public void setMainScreenController(MainScreenController mainScreenController) {
         this.mainScreenController = mainScreenController;
-    }
-
-    private void initRecipeDataRepository() throws FailedConnectingException {
-        RecipeUpdateWorker recipeUpdateWorker = RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-        RecipeEntityExtractor recipeEntityExtractor = RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-        RecipeInsertWorker recipeInsertWorker = RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-        RecipeDeleteWorker recipeDeleteWorker = RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-
-        RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(recipeUpdateWorker, recipeDeleteWorker, recipeEntityExtractor, recipeInsertWorker);
-        this.recipeDataRepository = RecipeDataRepository.getInstance(recipeDataSource);
-    }
-
-    private void initIngredientDataRepository() throws FailedConnectingException {
-        IngredientUpdateWorker ingredientUpdateWorker = IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-        IngredientEntityExtractor ingredientEntityExtractor = IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-        IngredientInsertWorker ingredientInsertWorker = IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-        IngredientDeleteWorker ingredientDeleteWorker = IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-
-        IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(ingredientUpdateWorker, ingredientDeleteWorker, ingredientEntityExtractor, ingredientInsertWorker);
-        this.ingredientDataRepository = IngredientDataRepository.getInstance(ingredientDataSource);
-    }
-
-    private void initRelationRepository() throws FailedConnectingException {
-        RelationRecordInsertWorker relationRecordInsertWorker = RelationRecordInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-        RelationRecordExtractor relationRecordExtractor = RelationRecordExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
-
-        RelationDataSource relationDataSource = RelationDataSource.getInstance(relationRecordInsertWorker, relationRecordExtractor);
-        this.relationRepository = RelationDataRepository.getInstance(relationDataSource);
     }
 
     private void addRecipe() {
@@ -266,5 +233,33 @@ public class RecipeAddingController implements Initializable {
             insertRelationUseCase.invoke(recipeId, ingredientId);
             ingredientId++;
         }
+    }
+
+    private RecipeDataRepository initRecipeDataRepository() throws FailedConnectingException {
+        RecipeUpdateWorker recipeUpdateWorker = RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeEntityExtractor recipeEntityExtractor = RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeInsertWorker recipeInsertWorker = RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeDeleteWorker recipeDeleteWorker = RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(recipeUpdateWorker, recipeDeleteWorker, recipeEntityExtractor, recipeInsertWorker);
+        return RecipeDataRepository.getInstance(recipeDataSource);
+    }
+
+    private IngredientDataRepository initIngredientDataRepository() throws FailedConnectingException {
+        IngredientUpdateWorker ingredientUpdateWorker = IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientEntityExtractor ingredientEntityExtractor = IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientInsertWorker ingredientInsertWorker = IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientDeleteWorker ingredientDeleteWorker = IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(ingredientUpdateWorker, ingredientDeleteWorker, ingredientEntityExtractor, ingredientInsertWorker);
+        return IngredientDataRepository.getInstance(ingredientDataSource);
+    }
+
+    private RelationDataRepository initRelationRepository() throws FailedConnectingException {
+        RelationRecordInsertWorker relationRecordInsertWorker = RelationRecordInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RelationRecordExtractor relationRecordExtractor = RelationRecordExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        RelationDataSource relationDataSource = RelationDataSource.getInstance(relationRecordInsertWorker, relationRecordExtractor);
+        return RelationDataRepository.getInstance(relationDataSource);
     }
 }

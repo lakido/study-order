@@ -40,22 +40,8 @@ public class IngredientEditingController implements Initializable {
     @FXML
     private RecipeEditingController recipeEditingController;
 
-    private final IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(
-            IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
-
-    private final RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(
-            RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
-
-    private final IngredientDataRepository ingredientDataRepository = IngredientDataRepository.getInstance(ingredientDataSource);
-    private final RecipeDataRepository recipeDataRepository = RecipeDataRepository.getInstance(recipeDataSource);
+    private final IngredientDataRepository ingredientDataRepository = initIngredientDataRepository();
+    private final RecipeDataRepository recipeDataRepository = initRecipeDataRepository();
 
     public IngredientEditingController() throws FailedConnectingException {
     }
@@ -75,7 +61,6 @@ public class IngredientEditingController implements Initializable {
                 ingredientRecommendationComboBox.getValue()
         );
 
-        RecipeEditingController recipeEditingController1 = recipeEditingController;
         recipeEditingController.insertIngredientModelToListView(ingredientModel);
 
         Stage stage = (Stage) confirmAddingIngredientButton.getScene().getWindow();
@@ -143,5 +128,25 @@ public class IngredientEditingController implements Initializable {
 
         TextFormatter<String> textFormatter = new TextFormatter<>(filter);
         ingredientNameTextField.setTextFormatter(textFormatter);
+    }
+
+    private RecipeDataRepository initRecipeDataRepository() throws FailedConnectingException {
+        RecipeUpdateWorker recipeUpdateWorker = RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeEntityExtractor recipeEntityExtractor = RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeInsertWorker recipeInsertWorker = RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeDeleteWorker recipeDeleteWorker = RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(recipeUpdateWorker, recipeDeleteWorker, recipeEntityExtractor, recipeInsertWorker);
+        return RecipeDataRepository.getInstance(recipeDataSource);
+    }
+
+    private IngredientDataRepository initIngredientDataRepository() throws FailedConnectingException {
+        IngredientUpdateWorker ingredientUpdateWorker = IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientEntityExtractor ingredientEntityExtractor = IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientInsertWorker ingredientInsertWorker = IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientDeleteWorker ingredientDeleteWorker = IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(ingredientUpdateWorker, ingredientDeleteWorker, ingredientEntityExtractor, ingredientInsertWorker);
+        return IngredientDataRepository.getInstance(ingredientDataSource);
     }
 }

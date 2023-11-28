@@ -1,9 +1,7 @@
 package org.study.ui.controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -32,13 +30,11 @@ public class IngredientAddingController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        restrictionForIngredientWeightSpinner();
-        restrictionForIngredientCaloriesSpinner();
-        restrictionForTextField();
+        setRestrictions();
     }
 
     @FXML
-    public void addIngredientWithSpecifiedParametersAsRecipePart(ActionEvent actionEvent){
+    public void addIngredientWithSpecifiedParametersAsRecipePart(){
         IngredientModel ingredientModel = new IngredientModel(
                 1,
                 ingredientNameTextField.getText(),
@@ -60,6 +56,12 @@ public class IngredientAddingController implements Initializable {
 
     public RecipeAddingController getRecipeAddingController() {
         return recipeAddingController;
+    }
+
+    private void setRestrictions() {
+        restrictionForIngredientWeightSpinner();
+        restrictionForIngredientCaloriesSpinner();
+        restrictionForTextField();
     }
 
     private void restrictionForIngredientWeightSpinner() {

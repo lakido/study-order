@@ -79,22 +79,10 @@ public class MainScreenController implements Initializable {
     @FXML
     private BorderPane borderPaneMainScreen;
 
-    private final RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(
-            RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
+    private final RecipeRepository recipeRepository = initRecipeDataRepository();
+    private final IngredientRepository ingredientRepository = initIngredientDataRepository();
 
-    private final IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(
-            IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
-
-    private final RecipeRepository recipeRepository = RecipeDataRepository.getInstance(recipeDataSource);
-    private final IngredientRepository ingredientRepository = IngredientDataRepository.getInstance(ingredientDataSource);
+    public MainScreenController() throws FailedConnectingException {}
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -115,6 +103,7 @@ public class MainScreenController implements Initializable {
             return row;
         });
     }
+
     @FXML
     public void handleRecipeAddButtonClick() throws Exception {
         Stage stage = new Stage();
@@ -140,10 +129,81 @@ public class MainScreenController implements Initializable {
 
         stage.show();
     }
-    public MainScreenController() throws FailedConnectingException {}
 
-    public BorderPane getBorder_pane() {
-        return borderPaneMainScreen;
+    @FXML
+    public void findARecipes() {
+        Integer popularity = popularitySpinner.getValue();
+        String category = categoryComboBox.getValue();
+        Integer preferredAge = preferredAgeSpinner.getValue();
+        Integer calories = caloriesSpinner.getValue();
+
+        ExtractRecipeListUseCase extractRecipeListUseCase = new ExtractRecipeListUseCase(recipeRepository);
+        List<RecipeModel> recipeModelList = new ArrayList<>(extractRecipeListUseCase.invoke(category, popularity, preferredAge).getOrNull());
+
+        Map<RecipeModel, List<IngredientModel>> recipeModelListMap = new HashMap<>();
+
+        for(RecipeModel recipeModel: recipeModelList) {
+            ExtractIngredientListByRecipeIdUseCase extractIngredientListByRecipeIdUseCase = new ExtractIngredientListByRecipeIdUseCase(ingredientRepository);
+            recipeModelListMap.put(recipeModel, extractIngredientListByRecipeIdUseCase.invoke(recipeModel.getId()).getOrNull());
+        }
+
+        Iterator<Map.Entry<RecipeModel, List<IngredientModel>>> iterator = recipeModelListMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<RecipeModel, List<IngredientModel>> entry = iterator.next();
+
+            List<IngredientModel> list = new ArrayList<>(entry.getValue());
+
+            int sumOfCalories = 0;
+
+            for(IngredientModel ingredientModel: list) {
+                sumOfCalories += ingredientModel.getCalories();
+            }
+
+            if (sumOfCalories > calories) iterator.remove();
+        }
+
+        recipeData.clear();
+        recipeData.addAll(recipeModelListMap.keySet());
+        startTableWithRecipes.refresh();
+    }
+
+    @FXML
+    public void deleteRecipeInContextMenu() {
+        RecipeModel recipeModel = startTableWithRecipes.getSelectionModel().getSelectedItem();
+
+        DeleteRecipeByNameUseCase deleteRecipeByNameUseCase = new DeleteRecipeByNameUseCase(recipeRepository);
+        deleteRecipeByNameUseCase.invoke(recipeModel.getName());
+
+        recipeData.remove(recipeModel);
+        startTableWithRecipes.refresh();
+    }
+
+    @FXML
+    public void editRecipeInContextMenu() throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForEditingRecipes.fxml"));
+        Parent root;
+
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Edit Recipe");
+
+        RecipeEditingController recipeEditingController = fxmlLoader.getController();
+        recipeEditingController.setMainScreenController(this);
+
+        EditingRecipeScreen editingRecipeScreen = new EditingRecipeScreen();
+        editingRecipeScreen.start(stage);
+
+        RecipeModel recipeModel = startTableWithRecipes.getSelectionModel().getSelectedItem();
+        recipeEditingController.setRecipeModel(recipeModel);
+        recipeEditingController.fillAndCustomizeTable();
+
+        recipeEditingController.setTableWithIngredientsByRecipeModel();
     }
 
     public void refreshTableView() {
@@ -155,8 +215,8 @@ public class MainScreenController implements Initializable {
         startTableWithRecipes.refresh();
     }
 
-    public ObservableList<RecipeModel> getCopyOfRecipeData() {
-        return FXCollections.observableArrayList(recipeData);
+    public BorderPane getBorder_pane() {
+        return borderPaneMainScreen;
     }
 
     private void createAndCustomizeTableView() {
@@ -189,7 +249,6 @@ public class MainScreenController implements Initializable {
         }
 
         IngredientsInContextMenuScreenController ingredientsInContextMenuScreenController = fxmlLoader.getController();
-        ingredientsInContextMenuScreenController.setRecipeModel(recipeModel);
 
         ingredientsInContextMenuScreenController.setFieldsByRecipeModel(recipeModel);
 
@@ -216,7 +275,6 @@ public class MainScreenController implements Initializable {
         restrictionForRecipeAgeSpinner();
         restrictionForRecipeCaloriesSpinner();
     }
-
     private void restrictionForRecipePopularitySpinner() {
         SpinnerValueFactory<Integer> recipePopularitySpinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50, 5);
 
@@ -273,79 +331,24 @@ public class MainScreenController implements Initializable {
         caloriesSpinner.setValueFactory(recipePopularitySpinnerValueFactory);
         caloriesSpinner.getEditor().setTextFormatter(textFormatter);
     }
-    @FXML
-    public void findARecipes() {
-        Integer popularity = popularitySpinner.getValue();
-        String category = categoryComboBox.getValue();
-        Integer preferredAge = preferredAgeSpinner.getValue();
-        Integer calories = caloriesSpinner.getValue();
 
-        ExtractRecipeListUseCase extractRecipeListUseCase = new ExtractRecipeListUseCase(recipeRepository);
-        List<RecipeModel> recipeModelList = new ArrayList<>(extractRecipeListUseCase.invoke(category, popularity, preferredAge).getOrNull());
+    private RecipeDataRepository initRecipeDataRepository() throws FailedConnectingException {
+        RecipeUpdateWorker recipeUpdateWorker = RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeEntityExtractor recipeEntityExtractor = RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeInsertWorker recipeInsertWorker = RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeDeleteWorker recipeDeleteWorker = RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
 
-        Map<RecipeModel, List<IngredientModel>> recipeModelListMap = new HashMap<>();
-
-        for(RecipeModel recipeModel: recipeModelList) {
-            ExtractIngredientListByRecipeIdUseCase extractIngredientListByRecipeIdUseCase = new ExtractIngredientListByRecipeIdUseCase(ingredientRepository);
-            recipeModelListMap.put(recipeModel, extractIngredientListByRecipeIdUseCase.invoke(recipeModel.getId()).getOrNull());
-        }
-
-        Iterator<Map.Entry<RecipeModel, List<IngredientModel>>> iterator = recipeModelListMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<RecipeModel, List<IngredientModel>> entry = iterator.next();
-
-            List<IngredientModel> list = new ArrayList<>(entry.getValue());
-
-            int sumOfCalories = 0;
-
-            for(IngredientModel ingredientModel: list) {
-                sumOfCalories += ingredientModel.getCalories();
-            }
-
-            if (sumOfCalories > calories) iterator.remove();
-        }
-
-        recipeData.clear();
-        recipeData.addAll(recipeModelListMap.keySet());
-        startTableWithRecipes.refresh();
+        RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(recipeUpdateWorker, recipeDeleteWorker, recipeEntityExtractor, recipeInsertWorker);
+        return RecipeDataRepository.getInstance(recipeDataSource);
     }
 
-    @FXML
-    public void editRecipeInContextMenu() throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForEditingRecipes.fxml"));
-        Parent root = null;
+    private IngredientDataRepository initIngredientDataRepository() throws FailedConnectingException {
+        IngredientUpdateWorker ingredientUpdateWorker = IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientEntityExtractor ingredientEntityExtractor = IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientInsertWorker ingredientInsertWorker = IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientDeleteWorker ingredientDeleteWorker = IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
 
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.setTitle("Edit Recipe");
-
-        RecipeEditingController recipeEditingController = fxmlLoader.getController();
-        recipeEditingController.setMainScreenController(this);
-
-        EditingRecipeScreen editingRecipeScreen = new EditingRecipeScreen();
-        editingRecipeScreen.start(stage);
-
-        RecipeModel recipeModel = startTableWithRecipes.getSelectionModel().getSelectedItem();
-        recipeEditingController.setRecipeModel(recipeModel);
-        recipeEditingController.fillAndCustomizeTable();
-
-        recipeEditingController.setTableWithIngredientsByRecipeModel();
-    }
-
-    @FXML
-    public void deleteRecipeInContextMenu() {
-        RecipeModel recipeModel = startTableWithRecipes.getSelectionModel().getSelectedItem();
-
-        DeleteRecipeByNameUseCase deleteRecipeByNameUseCase = new DeleteRecipeByNameUseCase(recipeRepository);
-        deleteRecipeByNameUseCase.invoke(recipeModel.getName());
-
-        recipeData.remove(recipeModel);
-        startTableWithRecipes.refresh();
+        IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(ingredientUpdateWorker, ingredientDeleteWorker, ingredientEntityExtractor, ingredientInsertWorker);
+        return IngredientDataRepository.getInstance(ingredientDataSource);
     }
 }

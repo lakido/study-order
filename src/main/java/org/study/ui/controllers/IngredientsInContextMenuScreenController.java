@@ -7,7 +7,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text;
 import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.exceptions.FailedConnectingException;
 import org.study.data.operations.changing.IngredientUpdateWorker;
@@ -35,65 +34,20 @@ public class IngredientsInContextMenuScreenController implements Initializable {
     private TableColumn<IngredientModel, Integer> ingredientWeightColumn;
     @FXML
     private TableColumn<IngredientModel, String> ingredientRecommendationColumn;
-    @FXML
-    private Text ingredientName;
-    @FXML
-    private Text ingredientCalories;
-    @FXML
-    private Text ingredientWeight;
-    @FXML
-    private Text ingredientRecommendation;
-
-    private RecipeModel recipeModel;
 
     private final ObservableList<IngredientModel> modelObservableList = FXCollections.observableArrayList();
 
-    private final IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(
-            IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
+    private final IngredientDataRepository ingredientDataRepository = initIngredientDataRepository();
 
-    private final IngredientDataRepository ingredientDataRepository = IngredientDataRepository.getInstance(ingredientDataSource);
-
-    private final ExtractIngredientListByRecipeIdUseCase extractIngredientListByRecipeIdUseCase = new ExtractIngredientListByRecipeIdUseCase(ingredientDataRepository);
-
-    public IngredientsInContextMenuScreenController() throws FailedConnectingException {
-    }
+    public IngredientsInContextMenuScreenController() throws FailedConnectingException {}
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-    }
-
-    public void setIngredientName(String ingredientName) {
-//        this.ingredientName.setText(ingredientName);
-        System.out.println(recipeModel.getId());
-    }
-
-    public void setIngredientCalories(String ingredientCalories) {
-        this.ingredientCalories.setText(ingredientCalories);
-    }
-
-    public void setIngredientWeight(String ingredientWeight) {
-        this.ingredientWeight.setText(ingredientWeight);
-    }
-
-    public void setIngredientRecommendation(String ingredientRecommendation) {
-        this.ingredientRecommendation.setText(ingredientRecommendation);
-    }
+    public void initialize(URL url, ResourceBundle resourceBundle) {}
 
     public void setFieldsByRecipeModel(RecipeModel recipeModel) {
+        ExtractIngredientListByRecipeIdUseCase extractIngredientListByRecipeIdUseCase = new ExtractIngredientListByRecipeIdUseCase(ingredientDataRepository);
         modelObservableList.addAll(extractIngredientListByRecipeIdUseCase.invoke(recipeModel.getId()).getOrNull());
         fillAndCustomizeTable();
-    }
-
-    public void setFieldsByIngredientModel(IngredientModel ingredientModel) {
-
-    }
-
-    public void setRecipeModel(RecipeModel recipeModel) {
-        this.recipeModel = recipeModel;
     }
 
     private void fillAndCustomizeTable() {
@@ -103,5 +57,15 @@ public class IngredientsInContextMenuScreenController implements Initializable {
         ingredientRecommendationColumn.setCellValueFactory(new PropertyValueFactory<>("recommendation"));
 
         ingredientModelTableView.setItems(modelObservableList);
+    }
+
+    private IngredientDataRepository initIngredientDataRepository() throws FailedConnectingException {
+        IngredientUpdateWorker ingredientUpdateWorker = IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientEntityExtractor ingredientEntityExtractor = IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientInsertWorker ingredientInsertWorker = IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientDeleteWorker ingredientDeleteWorker = IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(ingredientUpdateWorker, ingredientDeleteWorker, ingredientEntityExtractor, ingredientInsertWorker);
+        return IngredientDataRepository.getInstance(ingredientDataSource);
     }
 }

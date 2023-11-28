@@ -2,7 +2,6 @@ package org.study.ui.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -79,28 +78,9 @@ public class RecipeEditingController implements Initializable {
 
     private RecipeModel recipeModel;
 
-    private final IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(
-            IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
-
-    private final RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(
-            RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
-
-    private final RelationDataSource relationDataSource = RelationDataSource.getInstance(
-            RelationRecordInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
-            RelationRecordExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
-    );
-
-    private final IngredientDataRepository ingredientDataRepository = IngredientDataRepository.getInstance(ingredientDataSource);
-    private final RecipeDataRepository recipeDataRepository = RecipeDataRepository.getInstance(recipeDataSource);
-    private final RelationDataRepository relationDataRepository = RelationDataRepository.getInstance(relationDataSource);
+    private final IngredientDataRepository ingredientDataRepository = initIngredientDataRepository();
+    private final RecipeDataRepository recipeDataRepository = initRecipeDataRepository();
+    private final RelationDataRepository relationDataRepository = initRelationDataRepository();
 
     public RecipeEditingController() throws FailedConnectingException {
     }
@@ -111,7 +91,7 @@ public class RecipeEditingController implements Initializable {
     }
 
     @FXML
-    public void handleButtonToCreateNewWindowToUpdateIngredientForRecipe(ActionEvent actionEvent) throws Exception {
+    public void handleButtonToCreateNewWindowToUpdateIngredientForRecipe() throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForEditingIngredients.fxml"));
         Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
 
@@ -138,7 +118,7 @@ public class RecipeEditingController implements Initializable {
     }
 
     @FXML
-    public void handleButtonToUpdateRecipeInDatabase(ActionEvent actionEvent) {
+    public void handleButtonToUpdateRecipeInDatabase() {
         UpdateRecipeUseCase updateRecipeUseCase = new UpdateRecipeUseCase(recipeDataRepository);
         RecipeModel updatedRecipeModel = new RecipeModel(
                 recipeModel.getId(),
@@ -162,7 +142,7 @@ public class RecipeEditingController implements Initializable {
             insertIngredientUseCase.invoke(ingredientModel);
         });
 
-        for (IngredientModel ingredientModel: listWithNewIngredients
+        for (IngredientModel ignored : listWithNewIngredients
              ) {
             InsertRelationUseCase insertRelationUseCase = new InsertRelationUseCase(relationDataRepository);
             insertRelationUseCase.invoke(recipeModel.getId(), nextIngredientId++);
@@ -171,16 +151,16 @@ public class RecipeEditingController implements Initializable {
         stage.close();
     }
 
-    public void setMainScreenController(MainScreenController mainScreenController) {
-        this.mainScreenController = mainScreenController;
+    @FXML
+    public void editIngredientInContextMenu() {
+    }
+
+    @FXML
+    public void deleteIngredientInContextMenu() {
     }
 
     public void setRecipeModel(RecipeModel recipeModel) {
         this.recipeModel = recipeModel;
-    }
-
-    public RecipeModel getRecipeModel() {
-        return recipeModel;
     }
 
     public void setTableWithIngredientsByRecipeModel() {
@@ -202,6 +182,15 @@ public class RecipeEditingController implements Initializable {
 
         tableWithIngredientsToAdd.setItems(observableList);
         fillTableViewWithIngredients();
+    }
+
+    public void insertIngredientModelToListView(IngredientModel ingredientModel) {
+        observableList.add(ingredientModel);
+        tableWithIngredientsToAdd.refresh();
+    }
+
+    public void setMainScreenController(MainScreenController mainScreenController) {
+        this.mainScreenController = mainScreenController;
     }
 
     private void fillTableViewWithIngredients() {
@@ -263,16 +252,31 @@ public class RecipeEditingController implements Initializable {
         recipeNameTextField.setTextFormatter(textFormatter);
     }
 
-    public void insertIngredientModelToListView(IngredientModel ingredientModel) {
-        observableList.add(ingredientModel);
-        tableWithIngredientsToAdd.refresh();
+    private RecipeDataRepository initRecipeDataRepository() throws FailedConnectingException {
+        RecipeUpdateWorker recipeUpdateWorker = RecipeUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeEntityExtractor recipeEntityExtractor = RecipeEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeInsertWorker recipeInsertWorker = RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RecipeDeleteWorker recipeDeleteWorker = RecipeDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        RecipeDataSource recipeDataSource = RecipeDataSource.getInstance(recipeUpdateWorker, recipeDeleteWorker, recipeEntityExtractor, recipeInsertWorker);
+        return RecipeDataRepository.getInstance(recipeDataSource);
     }
 
-    @FXML
-    public void editIngredientInContextMenu(ActionEvent actionEvent) {
+    private IngredientDataRepository initIngredientDataRepository() throws FailedConnectingException {
+        IngredientUpdateWorker ingredientUpdateWorker = IngredientUpdateWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientEntityExtractor ingredientEntityExtractor = IngredientEntityExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientInsertWorker ingredientInsertWorker = IngredientInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        IngredientDeleteWorker ingredientDeleteWorker = IngredientDeleteWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        IngredientDataSource ingredientDataSource = IngredientDataSource.getInstance(ingredientUpdateWorker, ingredientDeleteWorker, ingredientEntityExtractor, ingredientInsertWorker);
+        return IngredientDataRepository.getInstance(ingredientDataSource);
     }
 
-    @FXML
-    public void deleteIngredientInContextMenu(ActionEvent actionEvent) {
+    private RelationDataRepository initRelationDataRepository() throws FailedConnectingException {
+        RelationRecordInsertWorker relationRecordInsertWorker = RelationRecordInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+        RelationRecordExtractor relationRecordExtractor = RelationRecordExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection());
+
+        RelationDataSource relationDataSource = RelationDataSource.getInstance(relationRecordInsertWorker, relationRecordExtractor);
+        return RelationDataRepository.getInstance(relationDataSource);
     }
 }
