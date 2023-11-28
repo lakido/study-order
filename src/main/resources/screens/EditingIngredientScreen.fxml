@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.text.Text?>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.study.ui.controllers.IngredientEditingController"
+           style="-fx-padding: 20 20 20 20"
+           minWidth="370">
+    <GridPane fx:id="gridPaneIngredientAdding" alignment="CENTER" vgap="40" hgap="40">
+
+        <Text text="New name: " GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="ingredientNameTextField" alignment="CENTER_RIGHT"
+                   GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="+Infinity"/>
+
+        <Text text="New recommendation: " GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox BorderPane.alignment="CENTER_RIGHT" fx:id="ingredientRecommendationComboBox" promptText="Select recommendation"
+                  GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="+Infinity">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Варка"/>
+                    <String fx:value="Обжаривание"/>
+                    <String fx:value="Запекание"/>
+                    <String fx:value="Тушение"/>
+                    <String fx:value="Сушка"/>
+                    <String fx:value="Засолка"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <Text text="New weight: " GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Spinner fx:id="ingredientWeightSpinner" editable="true" BorderPane.alignment="CENTER"
+                 GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="+Infinity"/>
+
+
+        <Text text="New calories: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Spinner fx:id="ingredientCaloriesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT"
+                 GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="+Infinity"/>
+
+        <Region GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"  GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <Button fx:id="confirmAddingIngredientButton" text="Refresh ingredient" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT"
+                GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" maxWidth="+Infinity"
+                onAction="#editIngredientWithSpecifiedParametersAsRecipePart"/>
+    </GridPane>
+</StackPane>
