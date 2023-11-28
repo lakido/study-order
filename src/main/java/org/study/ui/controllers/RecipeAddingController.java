@@ -101,7 +101,7 @@ public class RecipeAddingController implements Initializable {
         Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
 
         Parent root;
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/AddIngredientScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForAddingIngredients.fxml"));
 
         try {
             root = fxmlLoader.load();

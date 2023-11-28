@@ -112,7 +112,7 @@ public class RecipeEditingController implements Initializable {
 
     @FXML
     public void handleButtonToCreateNewWindowToUpdateIngredientForRecipe(ActionEvent actionEvent) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/EditingIngredientScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForEditingIngredients.fxml"));
         Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
 
         Parent root;

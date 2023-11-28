@@ -11,7 +11,7 @@ import java.io.IOException;
 public class IngredientAddingScreen extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/AddIngredientScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForAddingIngredients.fxml"));
         Parent root;
 
         try {

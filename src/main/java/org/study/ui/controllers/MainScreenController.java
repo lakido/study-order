@@ -121,7 +121,7 @@ public class MainScreenController implements Initializable {
 
         Parent root;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/AddRecipeScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForAddingRecipes.fxml"));
 
         try {
             root = fxmlLoader.load();
@@ -180,7 +180,7 @@ public class MainScreenController implements Initializable {
 
         Parent root;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/IngredientsInContextMenuScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenWithInformationAboutIngredient.fxml"));
 
         try {
             root = fxmlLoader.load();
@@ -312,7 +312,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     public void editRecipeInContextMenu() throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/EditingRecipeScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForEditingRecipes.fxml"));
         Parent root = null;
 
         try {
