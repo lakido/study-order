@@ -8,10 +8,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class IngredientAddingScreen extends Application {
+public class AddingRecipeScreen extends Application {
+
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForAddingIngredients.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ScreenForAddingRecipes.fxml"));
         Parent root;
 
         try {

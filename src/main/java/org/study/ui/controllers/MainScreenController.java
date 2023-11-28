@@ -38,7 +38,7 @@ import org.study.domain.usecases.recipe.DeleteRecipeByNameUseCase;
 import org.study.domain.usecases.recipe.ExtractRecipeListOfFirstRecordsUseCase;
 import org.study.domain.usecases.recipe.ExtractRecipeListUseCase;
 import org.study.ui.screens.EditingRecipeScreen;
-import org.study.ui.screens.IngredientsInContextMenuScreen;
+import org.study.ui.screens.InformationAboutIngredientScreen;
 
 import java.io.IOException;
 import java.net.URL;
@@ -203,9 +203,9 @@ public class MainScreenController implements Initializable {
     }
 
     private void openIngredientWindow (Stage stage) {
-        IngredientsInContextMenuScreen ingredientsInContextMenuScreen = new IngredientsInContextMenuScreen();
+        InformationAboutIngredientScreen informationAboutIngredientScreen = new InformationAboutIngredientScreen();
         try {
-            ingredientsInContextMenuScreen.start(stage);
+            informationAboutIngredientScreen.start(stage);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
