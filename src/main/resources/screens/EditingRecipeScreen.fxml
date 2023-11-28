@@ -36,7 +36,7 @@
         <Text text="New age preferences: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <Spinner fx:id="recipeAgePreferencesSpinner" editable="true" BorderPane.alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="+Infinity"/>
 
-        <Button fx:id="addIngredientButton" text="Change ingredients" GridPane.columnIndex="0" GridPane.rowIndex="4" onAction="#handleButtonToCreateNewWindowToUpdateIngredientForRecipe"/>
+        <Button fx:id="addIngredientButton" text="Add ingredients" GridPane.columnIndex="0" GridPane.rowIndex="4" onAction="#handleButtonToCreateNewWindowToUpdateIngredientForRecipe"/>
 
         <TableView BorderPane.alignment="CENTER_RIGHT" fx:id="tableWithIngredientsToAdd" GridPane.columnIndex="1" GridPane.rowIndex="4" maxWidth="+Infinity" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
             <columnResizePolicy>
@@ -48,6 +48,14 @@
                 <TableColumn fx:id="ingredientCaloriesColumn" text="Calories"/>
                 <TableColumn fx:id="ingredientRecommendationColumn" text="Recommendation"/>
             </columns>
+            <contextMenu>
+                <ContextMenu>
+                    <items>
+                        <MenuItem text="Edit ingredient" onAction="#editIngredientInContextMenu"/>
+                        <MenuItem text="Delete ingredient" onAction="#deleteIngredientInContextMenu"/>
+                    </items>
+                </ContextMenu>
+            </contextMenu>
         </TableView>
 
         <Button fx:id="updateRecipeButton" text="Refresh recipe" alignment="CENTER" BorderPane.alignment="CENTER_RIGHT" onAction="#handleButtonToUpdateRecipeInDatabase"

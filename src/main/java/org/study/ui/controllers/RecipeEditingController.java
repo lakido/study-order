@@ -4,30 +4,43 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.study.data.connection.ConnectionDatabaseSingleton;
 import org.study.data.exceptions.FailedConnectingException;
+import org.study.data.exceptions.UnexpectedException;
 import org.study.data.operations.changing.IngredientUpdateWorker;
 import org.study.data.operations.changing.RecipeUpdateWorker;
 import org.study.data.operations.deletion.IngredientDeleteWorker;
 import org.study.data.operations.deletion.RecipeDeleteWorker;
 import org.study.data.operations.extraction.IngredientEntityExtractor;
 import org.study.data.operations.extraction.RecipeEntityExtractor;
+import org.study.data.operations.extraction.RelationRecordExtractor;
 import org.study.data.operations.inserting.IngredientInsertWorker;
 import org.study.data.operations.inserting.RecipeInsertWorker;
+import org.study.data.operations.inserting.RelationRecordInsertWorker;
 import org.study.data.repository.IngredientDataRepository;
 import org.study.data.repository.RecipeDataRepository;
+import org.study.data.repository.RelationDataRepository;
 import org.study.data.sources.ingredient.IngredientDataSource;
 import org.study.data.sources.recipe.RecipeDataSource;
+import org.study.data.sources.relation.RelationDataSource;
 import org.study.domain.models.IngredientModel;
 import org.study.domain.models.RecipeModel;
 import org.study.domain.usecases.ingredient.ExtractIngredientListByRecipeIdUseCase;
+import org.study.domain.usecases.ingredient.ExtractNextAvailableIdForIngredientUseCase;
+import org.study.domain.usecases.ingredient.InsertIngredientUseCase;
 import org.study.domain.usecases.recipe.UpdateRecipeUseCase;
+import org.study.domain.usecases.relation.InsertRelationUseCase;
+import org.study.ui.screens.EditingIngredientScreen;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,8 +93,14 @@ public class RecipeEditingController implements Initializable {
             RecipeInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
     );
 
+    private final RelationDataSource relationDataSource = RelationDataSource.getInstance(
+            RelationRecordInsertWorker.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection()),
+            RelationRecordExtractor.getInstance(ConnectionDatabaseSingleton.getInstance().getConnection())
+    );
+
     private final IngredientDataRepository ingredientDataRepository = IngredientDataRepository.getInstance(ingredientDataSource);
     private final RecipeDataRepository recipeDataRepository = RecipeDataRepository.getInstance(recipeDataSource);
+    private final RelationDataRepository relationDataRepository = RelationDataRepository.getInstance(relationDataSource);
 
     public RecipeEditingController() throws FailedConnectingException {
     }
@@ -92,7 +111,30 @@ public class RecipeEditingController implements Initializable {
     }
 
     @FXML
-    public void handleButtonToCreateNewWindowToUpdateIngredientForRecipe(ActionEvent actionEvent) {
+    public void handleButtonToCreateNewWindowToUpdateIngredientForRecipe(ActionEvent actionEvent) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/EditingIngredientScreen.fxml"));
+        Stage parentStage = (Stage) addIngredientButton.getScene().getWindow();
+
+        Parent root;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new UnexpectedException();
+        }
+
+        Stage stage = new Stage();
+        Scene scene = new Scene(root);
+        stage.setTitle("Add Ingredient");
+        stage.setScene(scene);
+
+        stage.setWidth(parentStage.getWidth());
+        stage.setHeight(parentStage.getHeight());
+
+        IngredientEditingController ingredientEditingController = fxmlLoader.getController();
+        ingredientEditingController.setRecipeEditingController(this);
+
+        EditingIngredientScreen editingIngredientScreen = new EditingIngredientScreen();
+        editingIngredientScreen.start(stage);
     }
 
     @FXML
@@ -109,6 +151,23 @@ public class RecipeEditingController implements Initializable {
         updateRecipeUseCase.invoke(updatedRecipeModel);
         mainScreenController.refreshTableView();
         Stage stage = (Stage) updateRecipeButton.getScene().getWindow();
+
+        ExtractNextAvailableIdForIngredientUseCase extractNextAvailableIdForIngredientUseCase = new ExtractNextAvailableIdForIngredientUseCase(ingredientDataRepository);
+        int nextIngredientId = extractNextAvailableIdForIngredientUseCase.invoke().getOrNull();
+
+        List<IngredientModel> listWithNewIngredients = observableList.stream().filter(ingredientModel -> ingredientModel.getId() == 1).toList();
+
+        listWithNewIngredients.forEach(ingredientModel -> {
+            InsertIngredientUseCase insertIngredientUseCase = new InsertIngredientUseCase(ingredientDataRepository);
+            insertIngredientUseCase.invoke(ingredientModel);
+        });
+
+        for (IngredientModel ingredientModel: listWithNewIngredients
+             ) {
+            InsertRelationUseCase insertRelationUseCase = new InsertRelationUseCase(relationDataRepository);
+            insertRelationUseCase.invoke(recipeModel.getId(), nextIngredientId++);
+        }
+
         stage.close();
     }
 
@@ -118,6 +177,10 @@ public class RecipeEditingController implements Initializable {
 
     public void setRecipeModel(RecipeModel recipeModel) {
         this.recipeModel = recipeModel;
+    }
+
+    public RecipeModel getRecipeModel() {
+        return recipeModel;
     }
 
     public void setTableWithIngredientsByRecipeModel() {
@@ -198,5 +261,18 @@ public class RecipeEditingController implements Initializable {
 
         TextFormatter<String> textFormatter = new TextFormatter<>(filter);
         recipeNameTextField.setTextFormatter(textFormatter);
+    }
+
+    public void insertIngredientModelToListView(IngredientModel ingredientModel) {
+        observableList.add(ingredientModel);
+        tableWithIngredientsToAdd.refresh();
+    }
+
+    @FXML
+    public void editIngredientInContextMenu(ActionEvent actionEvent) {
+    }
+
+    @FXML
+    public void deleteIngredientInContextMenu(ActionEvent actionEvent) {
     }
 }
