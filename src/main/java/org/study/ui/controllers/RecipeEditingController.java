@@ -32,6 +32,7 @@ import org.study.data.sources.recipe.RecipeDataSource;
 import org.study.data.sources.relation.RelationDataSource;
 import org.study.domain.models.IngredientModel;
 import org.study.domain.models.RecipeModel;
+import org.study.domain.usecases.ingredient.DeleteIngredientByIdUseCase;
 import org.study.domain.usecases.ingredient.ExtractIngredientListByRecipeIdUseCase;
 import org.study.domain.usecases.ingredient.ExtractNextAvailableIdForIngredientUseCase;
 import org.study.domain.usecases.ingredient.InsertIngredientUseCase;
@@ -157,6 +158,13 @@ public class RecipeEditingController implements Initializable {
 
     @FXML
     public void deleteIngredientInContextMenu() {
+        IngredientModel ingredientModelForDeletion = tableWithIngredientsToAdd.getSelectionModel().getSelectedItem();
+
+        DeleteIngredientByIdUseCase deleteIngredientByIdUseCase = new DeleteIngredientByIdUseCase(ingredientDataRepository);
+        deleteIngredientByIdUseCase.invoke(ingredientModelForDeletion.getId());
+
+        observableList.remove(ingredientModelForDeletion);
+        tableWithIngredientsToAdd.refresh();
     }
 
     public void setRecipeModel(RecipeModel recipeModel) {
